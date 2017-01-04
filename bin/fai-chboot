@@ -5,7 +5,7 @@
 # fai-chboot -- manage configuration for network boot
 #
 # This script is part of FAI (Fully Automatic Installation)
-# Copyright (C) 2003-2014 Thomas Lange, lange@informatik.uni-koeln.de
+# Copyright (C) 2003-2016 Thomas Lange, lange@informatik.uni-koeln.de
 # Universitaet zu Koeln
 #
 #*********************************************************************
@@ -60,6 +60,7 @@ sub host2hex {
     return ip2hex($host);
   }
   return ('no IP','default') if ($host =~ /^default/);
+  return ('no IP',"$host")   if ($host =~ /\.tmpl$/);
 
   # MAC address with separator "-" or ":"
   if ($host =~ /^([0-9a-fA-F]{2}([:-]|$)){6}$/i) { # pattern matching
@@ -125,7 +126,7 @@ sub lsdir {
 # -lg list by goups (enabled, disabled, templates, others)
 # -l[detog] <pattern> list matching pattern
 
-  my ($h,$n,$host,$iaddr,$hex,$type);
+  my ($h,$n,$host,$iaddr,$filename,$type);
 
   @patterns = @_; # a global variable
 
@@ -140,26 +141,26 @@ sub lsdir {
   $opt_g and @allfiles = (@enabled,@disabled,@templates,@other);
 
   # map all entries (in HEX) to hostname or IP
-  foreach $hex (@allfiles) {
+  foreach $filename (@allfiles) {
     undef $host;
     undef $type;
 
-    if ($hex =~ /^default(.disable)?$/) {
-      $host = $hex;
+    if ($filename =~ /^default(.disable)?$/) {
+      $host = $filename;
       $type = '[DEFAULT]';
     }
-    if ($hex =~ /\.tmpl$/) {
-      $host = "$hex";
+    if ($filename =~ /\.tmpl$/) {
+      $host = "$filename";
       $type = '[Template]';
     }
 
-    if ($hex =~ /^01-[0-9A-F-]{17}$/i) {
-      $host = "$hex";
+    if ($filename =~ /^01-[0-9A-F-]{17}$/i) {
+      $host = "$filename";
       $type = '[MAC address]';
     }
 
-    if (($hex =~ /^[0-9A-F]+/) && ($hex !~ /^01-/) ) {
-      my $hexstrip = (split /\./,$hex)[0]; # remove .disable if necessary
+    if (($filename =~ /^[0-9A-F]+/) && ($filename !~ /^01-/) ) {
+      my $hexstrip = (split /\./,$filename)[0]; # remove .disable if necessary
       $n = $hexstrip;
       # hex to ip/subnet address
       while ( length $n ) {
@@ -179,13 +180,13 @@ sub lsdir {
     }
 
     if ( !$host ) {
-      $host = $hex;
+      $host = $filename;
       $type = '[Other]';
     }
 
-    $hexname{$host} = $hex;
-    $hname{$hex}= $host;
-    $type{$hex} = $type if $type;
+    $hexname{$host} = $filename;
+    $hname{$filename}= $host;
+    $type{$filename} = $type if $type;
   }
 
   if ($opt_g) { # print in group, sorted inside each group
@@ -204,9 +205,11 @@ sub prtsorted {
 
   my @list = @_;
 
-  @list = sort map {$hname{$_}} @list;
+  # sort by readable host names
+  @list = sort { $hname{$a} cmp $hname{$b} } @list;
+
   foreach (@list) {
-    printpxe ($_,$hexname{$_}, $type{$_});
+    printpxe ($hname{$_},$_, $type{$_});
   }
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -233,8 +236,11 @@ sub printpxe {
   close (CFG);
 
   if ($opt_l && ! $opt_L) {
-    $append =~ /FAI_ACTION=(\S+)/;
-    $append = $1;
+    if ($append =~ /FAI_ACTION=(\S+)/) {
+      $append = $1;
+    } else {
+      $append = 'NOACTION';
+    }
 #   printf "%-16.16s $append $kernelname %-8s\n",$host,$hex;
     printf "%-26.26s  %-22.22s $append $kernelname\n",$type?$type:$host,$hex;
   } else {
@@ -452,7 +458,8 @@ if ($opt_I) {
 }
 
 if ($opt_i || $opt_s) {
-  $kernelsuffix = (glob "$tftproot/vmlinuz*$opt_s")[-1];
+  $kernelsuffix = (glob "$nfsroot/boot/vmlinuz*$opt_s")[-1];
+  $kernelsuffix //= (glob "$tftproot/vmlinuz*$opt_s")[-1];
   $kernelsuffix=~ s/.+vmlinuz-//;
   die "No kernel found matching $tftproot/vmlinuz*$opt_s\n" unless $kernelsuffix;
 }
@@ -460,12 +467,8 @@ if ($opt_i || $opt_s) {
 if ($opt_i) {
 
   my $bopt;
-  # check if we use live-boot or dracut inside the nfsroot
-  if ( -d "$nfsroot/live/filesystem.dir/boot" ) {
-    $bopt="boot=live";
-  } else {
-    $bopt="aufs";
-  }
+  -d "$nfsroot/lib/modules/$kernelsuffix/kernel/fs/aufs" and $bopt="aufs";
+  -d "$nfsroot/lib/modules/$kernelsuffix/kernel/fs/overlayfs" and $bopt="rootovl";
 
   # create config so host will boot the install kernel
   $kernelname = "kernel ${opt_U}vmlinuz-$kernelsuffix";
@@ -474,7 +477,7 @@ if ($opt_i) {
   $bootprot   = "ip=dhcp ";
 
 } elsif ($opt_o) {
-  $kernelname = 'localboot 0';
+  $kernelname = 'localboot -1';
   $rootfs   = '';
   $bootprot = '';
   $flags    = '';

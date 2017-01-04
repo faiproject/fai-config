@@ -1,6 +1,6 @@
 #! /bin/bash
 
-# (c) Thomas Lange, 2001-2014, lange@debian.org
+# (c) Thomas Lange, 2001-2016, lange@debian.org
 # (c) Michael Goetze, 2010-2011, mgoetze@mgoetze.net
 
 error=0; trap 'error=$(($?>$error?$?:$error))' ERR # save maximum error code
@@ -11,24 +11,38 @@ for module in $MODULESLIST; do
 done
 
 fcopy -Mv /etc/hostname || echo $HOSTNAME > $target/etc/hostname
-ainsl -av /etc/mailname ${HOSTNAME}
+ainsl -a /etc/mailname ${HOSTNAME}
 if [ ! -e $target/etc/adjtime ]; then
-    printf "0.0 0 0.0\n0\nUTC" > $target/etc/adjtime
+    printf "0.0 0 0.0\n0\nUTC\n" > $target/etc/adjtime
 fi
 if [ "$UTC" = "yes" ]; then
     sed -i -e 's:^LOCAL$:UTC:' $target/etc/adjtime
 else
     sed -i -e 's:^UTC$:LOCAL:' $target/etc/adjtime
 fi
-if [ -f ${target}/etc/inittab ]; then
+
+# enable linuxlogo
+if [ -f $target/etc/inittab ]; then
     sed -i -e 's#/sbin/getty 38400#/sbin/getty -f /etc/issue.linuxlogo 38400#' ${target}/etc/inittab
+elif [ -f $target/lib/systemd/system/getty@.service ]; then
+    sed -i -e 's#sbin/agetty --noclear#sbin/agetty -f /etc/issue.linuxlogo --noclear#' $target/lib/systemd/system/getty@.service
 fi
 
-rm -f $target/etc/dpkg/dpkg.cfg.d/fai
+if [ ! -f $target/etc/machine-id -a -f $target/bin/systemd-machine-id-setup ]; then
+    $ROOTCMD systemd-machine-id-setup
+fi
 
-[ $FAI_ACTION = "install" ] && cp /etc/fai/fai.conf $target/etc/fai/fai.conf
-ainsl -av /etc/fai/fai.conf "FAI_CONFIG_SRC=$FAI_CONFIG_SRC"
+ln -fs /proc/mounts $target/etc/mtab
+
+rm -f $target/etc/dpkg/dpkg.cfg.d/fai $target/etc/dpkg/dpkg.cfg.d/unsafe-io
+
+if [ $FAI_ACTION = "install" -o $FAI_ACTION = "dirinstall" ] ; then
+  [ -f /etc/fai/fai.conf ] && cp /etc/fai/fai.conf $target/etc/fai/fai.conf
+fi
+
+ainsl -a /etc/fai/fai.conf "FAI_CONFIG_SRC=$FAI_CONFIG_SRC"
 
 fcopy -Miv /etc/fai/fai.conf
+fcopy -iv /etc/rc.local
 
 exit $error

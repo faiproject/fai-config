@@ -4,12 +4,12 @@ core
 PACKAGES yumgroup XORG
 #gnome-desktop base-x # slc5/CentOS 5
 #basic-desktop x11 fonts #slc6/CentOS 6
-gnome # CentOS 7
+gnome-desktop # CentOS 7
 
 PACKAGES yumi
 authconfig
 kernel
-# grub # CentOS 5 and 6
+# sysvinit-tools grub # CentOS 5 and 6
 grub2  # CentOS 7
 less
 openssh
@@ -17,9 +17,15 @@ openssh-clients
 openssh-server
 vim-enhanced
 man
-wget
+curl
 screen
 unzip
 which
 nfs-utils
-sendmail
+pakchois
+ncurses-base # currently missing in the base file
+
+#sendmail # only for C5 and C6
+
+PACKAGES yumi LVM
+lvm2

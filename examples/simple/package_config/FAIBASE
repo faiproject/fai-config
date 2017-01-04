@@ -1,16 +1,12 @@
-PACKAGES aptitude DEBIAN
+PACKAGES install-norec DEBIAN
 fai-client
-cron
 debconf-utils
 file
-hdparm
 less
 linuxlogo
-nfs-common
 rdate
 rsync
 openssh-client openssh-server
-strace
 time
 procinfo
 nullmailer
@@ -18,4 +14,3 @@ eject
 locales
 console-setup kbd
 pciutils usbutils
-lvm2

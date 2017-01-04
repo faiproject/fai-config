@@ -48,6 +48,11 @@ sub create_fstab_line {
   my ($d_ref, $name, $dev_name) = @_;
 
   my @fstab_line = ();
+  my $comment_line = "";
+
+  # add a comment denoting the actual device name in case of UUID or LABEL
+  $comment_line="# device during installation: $dev_name\n"
+    if ($name =~ /^(UUID|LABEL)=/);
 
   # start with the device key
   push @fstab_line, $name;
@@ -61,10 +66,6 @@ sub create_fstab_line {
   $fstab_line[-1] = 0 if ($d_ref->{filesystem} eq "swap");
   $fstab_line[-1] = 0 if ($d_ref->{filesystem} eq "tmpfs");
 
-  # add a comment denoting the actual device name in case of UUID or LABEL
-  push @fstab_line, "# device at install: $dev_name"
-    if ($name =~ /^(UUID|LABEL)=/);
-
   # set the ROOT_PARTITION variable, if this is the mountpoint for /
   $FAI::disk_var{ROOT_PARTITION} = $name
     if ($d_ref->{mountpoint} eq "/");
@@ -73,8 +74,10 @@ sub create_fstab_line {
   $FAI::disk_var{SWAPLIST} .= " " . $dev_name
     if ($d_ref->{filesystem} eq "swap");
 
+  my $ret = "\n$comment_line";
   # join the columns of one line with tabs
-  return join ("\t", @fstab_line);
+  $ret .= join ("\t", @fstab_line);
+  return $ret;
 }
 
 
@@ -140,14 +143,16 @@ sub get_fstab_key {
 #
 ################################################################################
 sub find_boot_mnt_point {
+  my %config = @_;
+
   my $mnt_point = ".NO_SUCH_MOUNTPOINT";
 
   # walk through all configured parts
-  foreach my $c (keys %FAI::configs) {
+  foreach my $c (keys %config) {
 
     if ($c =~ /^PHY_(.+)$/) {
-      foreach my $p (keys %{ $FAI::configs{$c}{partitions} }) {
-        my $this_mp = $FAI::configs{$c}{partitions}{$p}{mountpoint};
+      foreach my $p (keys %{ $config{$c}->{partitions} }) {
+        my $this_mp = $config{$c}->{partitions}->{$p}->{mountpoint};
 
         next if (!defined($this_mp));
 
@@ -156,8 +161,8 @@ sub find_boot_mnt_point {
       }
     } elsif ($c =~ /^VG_(.+)$/) {
       next if ($1 eq "--ANY--");
-      foreach my $l (keys %{ $FAI::configs{$c}{volumes} }) {
-        my $this_mp = $FAI::configs{$c}{volumes}{$l}{mountpoint};
+      foreach my $l (keys %{ $config{$c}->{volumes} }) {
+        my $this_mp = $config{$c}->{volumes}->{$l}->{mountpoint};
 
         next if (!defined($this_mp));
 
@@ -165,15 +170,15 @@ sub find_boot_mnt_point {
         $mnt_point = $this_mp if ($this_mp eq "/");
       }
     } elsif ($c eq "BTRFS") {
-      foreach my $b (keys %{ $FAI::configs{$c}{volumes}}) {
-        my $this_mp = $FAI::configs{$c}{volumes}{mountpoint};
+      foreach my $b (keys %{ $config{$c}->{volumes}}) {
+        my $this_mp = $config{$c}->{volumes}->{$b}->{mountpoint};
         next if (!defined($this_mp));
         return $this_mp if ($this_mp eq "/boot");
         $mnt_point = $this_mp if ($this_mp eq "/");
       }
     } elsif ($c eq "RAID" || $c eq "CRYPT") {
-      foreach my $r (keys %{ $FAI::configs{$c}{volumes} }) {
-        my $this_mp = $FAI::configs{$c}{volumes}{$r}{mountpoint};
+      foreach my $r (keys %{ $config{$c}->{volumes} }) {
+        my $this_mp = $config{$c}->{volumes}->{$r}->{mountpoint};
 
         next if (!defined($this_mp));
 
@@ -211,7 +216,7 @@ sub generate_fstab {
   my @fstab = ();
 
   # mount point for /boot
-  my $boot_mnt_point = &FAI::find_boot_mnt_point();
+  my $boot_mnt_point = find_boot_mnt_point(%FAI::configs);
 
   # walk through all configured parts
   # the order of entries is most likely wrong, it is fixed at the end
@@ -220,7 +225,7 @@ sub generate_fstab {
     # entry is a physical device
     if ($c =~ /^PHY_(.+)$/) {
       my $device = $1;
-
+      next if (exists($config->{$c}->{vg}) && $config->{$c}->{vg} == 1);
       # make sure the desired fstabkey is defined at all
       defined ($config->{$c}->{fstabkey})
         or &FAI::internal_error("fstabkey undefined");
@@ -242,10 +247,11 @@ sub generate_fstab {
           # set the BOOT_DEVICE and BOOT_PARTITION variables
           $FAI::disk_var{BOOT_PARTITION} = $device_name;
           $FAI::disk_var{BOOT_DEVICE} = $device;
+
         }
 
-        push @fstab, &FAI::create_fstab_line($p_ref,
-          &FAI::get_fstab_key($device_name, $config->{$c}->{fstabkey}), $device_name);
+        push @fstab, create_fstab_line($p_ref,
+          get_fstab_key($device_name, $config->{$c}->{fstabkey}), $device_name);
 
       }
     } elsif ($c =~ /^VG_(.+)$/) {
@@ -268,8 +274,8 @@ sub generate_fstab {
         $FAI::disk_var{BOOT_DEVICE} = $device_name
           if ($l_ref->{mountpoint} eq $boot_mnt_point);
 
-        push @fstab, &FAI::create_fstab_line($l_ref,
-          &FAI::get_fstab_key($device_name, $config->{"VG_--ANY--"}->{fstabkey}), $device_name);
+        push @fstab, create_fstab_line($l_ref,
+          get_fstab_key($device_name, $config->{"VG_--ANY--"}->{fstabkey}), $device_name);
       }
     } elsif ($c eq "RAID") {
 
@@ -288,8 +294,8 @@ sub generate_fstab {
         $FAI::disk_var{BOOT_DEVICE} = $device_name
           if ($r_ref->{mountpoint} eq $boot_mnt_point);
 
-        push @fstab, &FAI::create_fstab_line($r_ref,
-          &FAI::get_fstab_key($device_name, $config->{RAID}->{fstabkey}), $device_name);
+        push @fstab, create_fstab_line($r_ref,
+          get_fstab_key($device_name, $config->{RAID}->{fstabkey}), $device_name);
       }
     } elsif ($c eq "BTRFS") {
       # cycles through the volume IDs
@@ -298,12 +304,22 @@ sub generate_fstab {
         # skip entries without a mountpoint
         next if ( $config->{$c}->{volumes}->{$v}->{mountpoint} eq "-");
 
+        $FAI::disk_var{BOOT_DEVICE} = (keys %{$config->{$c}->{volumes}->{$v}->{devices}})[0]
+          if ( $config->{$c}->{volumes}->{$v}->{mountpoint} eq $boot_mnt_point);
+
         # get an array of devices that are part of the BTRFS RAID configuration
         my @device_names = keys %{ $config->{$c}->{volumes}->{$v}->{devices}};
+        my $name_string = join(".", @device_names);
 
         # Only one of the BTRFS RAID devices are necessary to get the fstab key
-        push @fstab, &FAI::create_fstab_line($config->{$c}->{volumes}->{$v},
-          &FAI::get_fstab_key($device_names[0], $config->{"BTRFS"}->{fstabkey}), $device_names[0]);
+
+        if (defined($config->{"BTRFS"}->{fstabkey})) {
+          push @fstab, &FAI::create_fstab_line($config->{$c}->{volumes}->{$v},
+                                               &FAI::get_fstab_key($device_names[0], $config->{"BTRFS"}->{fstabkey}), $name_string);
+        } else {
+          push @fstab, &FAI::create_fstab_line($config->{$c}->{volumes}->{$v},
+                                               &FAI::get_fstab_key($device_names[0], $config->{$c}->{volumes}->{$v}->{fstabkey}), $device_names[0]);
+        }
       }
     } elsif ($c eq "CRYPT") {
       foreach my $v (keys %{ $config->{$c}->{volumes} }) {
@@ -316,7 +332,7 @@ sub generate_fstab {
         ($c_ref->{mountpoint} eq $boot_mnt_point) and
           die "Boot partition cannot be encrypted\n";
 
-        push @fstab, &FAI::create_fstab_line($c_ref, $device_name, $device_name);
+        push @fstab, create_fstab_line($c_ref, $device_name, $device_name);
       }
     } elsif ($c eq "TMPFS") {
       foreach my $v (keys %{ $config->{$c}->{volumes} }) {
@@ -335,7 +351,7 @@ sub generate_fstab {
 	  $c_ref->{mount_options} .= "size=" . $c_ref->{size};
 	}
 
-        push @fstab, &FAI::create_fstab_line($c_ref, "tmpfs", "tmpfs");
+        push @fstab, create_fstab_line($c_ref, "tmpfs", "tmpfs");
       }
     } else {
       &FAI::internal_error("Unexpected key $c");

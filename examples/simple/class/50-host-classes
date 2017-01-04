@@ -1,35 +1,31 @@
 #! /bin/bash
 
-# assign classes to hosts
+# assign classes to hosts based on their hostname
+
+# do not use this if a menu will be presented
+[ "$flag_menu" ] && exit 0
 
 # use a list of classes for our demo machine
 case $HOSTNAME in
     faiserver)
-        echo "FAIBASE DEBIAN DHCPC DEMO FAISERVER" ;;
+        echo "FAIBASE DEBIAN DEMO FAISERVER" ;;
     demohost|client*)
-        echo "FAIBASE DEBIAN DHCPC DEMO" ;;
+        echo "FAIBASE DEBIAN DEMO" ;;
     xfcehost)
-        echo "FAIBASE DEBIAN DHCPC DEMO XORG XFCE";;
+        echo "FAIBASE DEBIAN DEMO XORG XFCE LVM";;
     gnomehost)
-        echo "FAIBASE DEBIAN DHCPC DEMO XORG GNOME";;
-    bear)
-        echo "FAIBASE DEBIAN DHCPC LVM_XEN_SERVER XEN" ;;
-    puma)
-        echo "FAIBASE DEBIAN DHCPC RAID_XEN_VIRTUAL" ;;
+        echo "FAIBASE DEBIAN DEMO XORG GNOME";;
     centos)
         echo "FAIBASE CENTOS"   # you may want to add class XORG here
-        ifclass I386 && echo CENTOS6_32
-        ifclass AMD64 && echo CENTOS6_64
+        ifclass I386 && echo CENTOS6_32  # AFAIK there's no 32bit C7
+        ifclass AMD64 && echo CENTOS7_64
         exit 0 ;; # CentOS does not use the GRUB class
     slchost)
         # Scientific Linux Cern, is very similar to CentOS. SLC should alsways use the class CENTOS
         echo "FAIBASE CENTOS SLC"  # you may want to add class XORG here
-        ifclass I386 && echo SLC6_32
-        ifclass AMD64 && echo SLC6_64
+        ifclass I386 && echo SLC7_32
+        ifclass AMD64 && echo SLC7_64
         exit 0 ;; # CentOS/SLC does not use the GRUB class
     *)
-        echo "FAIBASE DEBIAN DHCPC" ;;
+        echo "FAIBASE DEBIAN DEMO" ;;
 esac
-
-ifclass -o I386 AMD64 && echo GRUB_PC
-exit 0

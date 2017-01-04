@@ -10,5 +10,3 @@ SELINUX=disabled
 #       mls - Multi Level Security protection.
 SELINUXTYPE=targeted
 # SETLOCALDEFS= Check local definition changes
-SETLOCALDEFS=0
-

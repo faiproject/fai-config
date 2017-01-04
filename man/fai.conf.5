@@ -42,32 +42,49 @@ This configuration file is NOT copied into the nfsroot by fai-make-nfsroot.
 .SH VARIABLES
 
 .TP
-\fBFAI_CONFIG_SRC\fP URL to access configuration space
-A protocol-specific URL defining the server and directory/repository to fetch
-the configuration space from.
+\fBFAI_CONFIG_SRC\fP
+This variable defines how to access the configuration space. It
+defines the protocol, the server and the location of the config space.
+
+For an initial installation of a client this variable is defined by using fai-chboot(8).
+If you do a fai softupdate, you can set the value in /etc/fai/fai.conf
+or by using the option --cspace.
+
 .LP
 The following protocols and URL schemes are currently supported:
 .IP \(bu
 NFS: nfs://<server>/<exported directory>
+
+Example: nfs://faiserver/srv/fai/config
 .IP \(bu
 Local directory: file://<directory>
 
-The directory has to be an absolute path. So, this URI always starts
+The directory has to be an absolute path. So, this URL always starts
 with three slashes like this: file:///
 .IP \(bu
 CVS: cvs[+ssh]://<user>@<host>/<cvs root> <module>[=<tag>]
+
+The config space is received from a cvs checkout.
 .IP \(bu
 Subversion: svn[+(file|http|https|ssh)]://[<user>@]<host>/<repository>
+
+The config space checked out from a subversion repository using
+several protocol variants. Checkouts without a user name are also supported.
 .IP \(bu
 Git: git[+<protocol>]://<git path>
+
+The config space checked out from a
+git repository, host can be empty. Also supported is git+http.
 .IP \(bu
 Mercurial: hg+(http|https)://<hg path>
 .IP \(bu
-HTTP: http://<server>/<filename>
-where <filename> is a (compressed) tar archive. For verification purposes, also
-an
-.BR md5sum (1)
-generated hash must exist at the same location as <filename>.md5.
+HTTP: (http|https|scp|sftp)://<server>/<filename>
+where <filename> is a (compressed) tar archive.
+
+The config space will be downloaded from the given location via the
+specified protocol.  <filename> will be extracted by ftar(8), and thus
+needs to have a recognized suffix, such as .tar.gz or tar.xz.
+
 
 .TP
 \fBLOGUSER\fP Account name on the install server to save log files and call
@@ -87,15 +104,40 @@ If the variable is undefined, this feature is disabled.
 
 .TP
 \fBFAI_LOGPROTO\fP Protocol for saving logs
-Supported values are: ssh, rsh, and ftp. If undefined use ssh. Will only be used
-if
+Supported values are: ssh (default), rsh, ftp and none. This will only be used
+if also
 .BR LOGUSER
 is set.
 
+ssh: Use the scp command to copy the log files to the log server.
+
+rsh: Use the rcp command to copy the log files to the log server.
+
+ftp: This option saves logs to the remote FTP server defined by the
+$LOGSERVER variable ($SERVER value is used if not set). Connection
+to the FTP server is done as user $LOGUSER using password
+$LOGPASSWD.  The FTP server log directory is defined in
+$LOGREMOTEDIR. These variables are also defined in file
+'fai.conf'. You need write access for the $LOGREMOTEDIR on the FTP
+server. All files in the directory /tmp/fai are copied to the
+FTP server following this example:
+
+  ftp://$LOGUSER:$LOGPASSWD@$LOGSERVER/$LOGREMOTEDIR/
+
+none: Don't save the log files to the install server.
+
+
 .TP
 \fBFAI_DEBMIRROR\fP Access Debian mirror via NFS-mounted directory
-If defined, install clients mount the NFS share to $MNTPOINT.
-Syntax: <host>:<exported directory>
+If defined, FAI mounts the NFS share to $MNTPOINT during installation.
+Example: installserver:/srv/debianmirror
+
+.TP
+.B FAI_MONITOR_PORT
+The port to which FAI sents messages, if the fai-monitor is
+running. Default to 4711. See also fai-monitor(8). This variable has
+to be set inside the nfsroot before the configuration space is
+available.
 
 .SH SEE ALSO
 

@@ -1,44 +1,47 @@
 # package list for creating the NFSROOT
 
-PACKAGES aptitude
+PACKAGES install
 
-sysvinit-core
-nfs-common fai-nfsroot module-init-tools ssh rdate lshw rpcbind
+nfs-common fai-nfsroot ssh rdate lshw rpcbind
 rsync lftp less dump reiserfsprogs e2fsprogs usbutils
 hwinfo psmisc pciutils hdparm smartmontools parted mdadm lvm2
 dnsutils ntpdate dosfstools xfsprogs xfsdump btrfs-tools
 procinfo numactl dialog
 console-common kbd
-iproute moreutils udev subversion
+iproute2 netselect moreutils udev subversion
 xz-utils
-cupt
 pxelinux syslinux-common # in jessie we need both
+curl wget- netcat-traditional
+ca-certificates # for get-config-dir-https
+nmap
+emacs24-nox
 
 # some network cards needs firmware
 firmware-bnx2 firmware-bnx2x firmware-realtek
 #firmware-linux-nonfree
 
-# dracut can replace live-boot
-dracut-network live-boot- initramfs-tools-
+# dracut replaces live-boot and initramfs-tools
+dracut-network dracut live-boot- initramfs-tools-
+dracut-config-generic # for jessie add "deb http://fai-project.org/download jessie koeln"
 
-# choose if you like live-boot or dracut inside the nfsroot
-#live-boot live-boot-doc
+#git # git consumes a lot of disk space on the FAI CD
+
+sysvinit-core systemd-sysv-
 
 # you should not edit the lines below
 # architecture dependend list of packages that are installed
 
-#git # git consumes a lot of disk space on the FAI CD (ISO 9660)
-
-PACKAGES aptitude I386
+PACKAGES install I386
 grub-pc
-linux-image-686
+linux-image-686-pae
 
 # packages for Ubuntu natty/oneiric/precise:
 # linux-image-generic live-boot
 
-PACKAGES aptitude AMD64
+PACKAGES install AMD64
 grub-pc
 linux-image-amd64
 
-# packages for Ubuntu natty/oneiric/precise:
-# linux-image-generic live-boot
+# packages for Ubuntu vivid
+PACKAGES install UBUNTU
+upstart-sysv

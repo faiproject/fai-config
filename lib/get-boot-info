@@ -5,7 +5,7 @@
 # bootinfo -- get boot information via DHCP protocol
 #
 # This script is part of FAI (Fully Automatic Installation)
-# (c) 2003-2014 by Thomas Lange, lange@informatik.uni-koeln.de
+# (c) 2003-2016 by Thomas Lange, lange@informatik.uni-koeln.de
 # Universitaet zu Koeln
 #
 #*********************************************************************
@@ -39,10 +39,7 @@ netdevice_info() {
     # if not defined, use boot messages to determine network devices
     [ -n "$netdevices" ] || netdevices=$netdevices_up
 
-    # some network driver do not echo eth0,..; they are not detected
-    netdevices_all=$(dmesg| perl -ne 'print $&,"\n" if m/\beth[0-9]+\b/')
-    tmp=$(ip link | grep "^[1-9]" | cut -d : -f 2 | cut -d ' ' -f 2 | grep "^eth")
-    netdevices_all="$netdevices_all $tmp"
+    netdevices_all=$(ip link | grep "^[1-9]" | cut -d : -f 2 | cut -d ' ' -f 2 | egrep "^eth|^en")
     netdevices_all=$(for dev in $netdevices_all; do echo $dev; done| sort | uniq| tr '\n' ' ')
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -64,12 +61,19 @@ setnet() {
 
     # get network parameters
     # first get first active network device
-    local dev dummy
-    dev=$(ip ad show up | awk -F': ' '/^[0-9]/ && ! / lo:/ {print $2;exit}')
-    if [ -z "$dev" ]; then
-        sleep 3 # if interface needs some time to come up
-        dev=$(ip ad show up | awk -F': ' '/^[0-9]/ && ! / lo:/ {print $2;exit}')
-    fi
+    local dev dummy n
+
+    n=0
+    until [ $n = 7 ]; do
+	dev=$(ip ad show up | awk -F': ' '/^[0-9]/ && ! / lo:/ {print $2;exit}')
+	if [ -z "$dev" ]; then
+            sleep 2 # if interface needs some time to come up
+	else
+	    break
+	fi
+	n=$(($n + 1))
+    done
+
     read IPADDR NETMASK BROADCAST dummy<<<$(ifdata -p $dev)
     GATEWAYS=$(ip route | awk '/^default/ {print $3}')
 
@@ -83,6 +87,11 @@ setnet() {
 	GATEWAYS=$GATEWAYS
 	BROADCAST=$BROADCAST
 EOF
+
+    if [ -n "$DOMAIN" ]; then
+        # DOMAIN was specified on the kernel command line
+        echo "DOMAIN=$DOMAIN" >> $bootlog
+    fi
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 get_fixed_info() {
@@ -137,7 +146,14 @@ fi
 
 get_dhcp_info
 
+# DHCP should not overwrite the hostname if it's already set
+# then remove this line from boot.log
+read hname < /proc/sys/kernel/hostname
+if [ -n "$hname" -o "$hname" = '(none)' ]; then
+    sed -i -e '/^HOSTNAME=/d' $bootlog
+fi
+
 if ! grep -q DOMAIN= $bootlog; then
-    echo 'Warning: no domain name configured, using "localdomain"' >&2
+    echo 'Info: no domain name configured, using "localdomain"' >&2
     echo "DOMAIN=localdomain" >> $bootlog
 fi

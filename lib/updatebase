@@ -16,7 +16,7 @@ if [ "$FAI_ACTION" = "install" -o "$FAI_ACTION" = "dirinstall" ]; then
     # if libc is upgraded init u is called in chroot environment and
     # then init will eat up much cpu time
     # fake some more programs
-    fai-divert -a /sbin/init /usr/sbin/liloconfig /usr/sbin/invoke-rc.d
+    fai-divert -a /sbin/init /usr/sbin/liloconfig
     fai-divert -a /usr/sbin/policy-rc.d
     # never start any daemons inside chroot during installtion
     cat > $FAI_ROOT/usr/sbin/policy-rc.d <<EOF
@@ -32,7 +32,11 @@ $ROOTCMD apt-get $aptopt check
 [ $? -ne 0 ] && $ROOTCMD apt-get $aptopt -f install </dev/null
 $ROOTCMD dpkg -C
 [ $? -ne 0 ] && yes '' | $ROOTCMD dpkg --configure -a
-$ROOTCMD aptitude $aptopt -f -y full-upgrade </dev/null
+if [ -x $FAI_ROOT/usr/bin/aptitude ]; then
+    $ROOTCMD aptitude $aptopt -f -y full-upgrade </dev/null
+else
+    $ROOTCMD apt-get $aptopt dist-upgrade < /dev/null
+fi
 # update dpkg info which packages are available
 tmp=$($ROOTCMD mktemp) || exit 88
 $ROOTCMD apt-cache dumpavail > $FAI_ROOT/$tmp

@@ -62,12 +62,12 @@ Set the directory for the network boot configuration to
 DIR. The default value is /srv/tftp/fai/pxelinux.cfg/.
 .TP
 .B \-d
-Disable network booting for HOST. This renames the config file adding
-the suffix .disable to it.
+Disable the PXE configuration for the specific HOST. This renames the config file adding
+the suffix .disable to it, making PXE boot fall back to the default.
 .TP
 .B \-e
-Reenable network booting for HOST. This renames the config file removing
-the suffix .disable from it, so the next time it uses the PXE configuration.
+Re-enable network booting for HOST. This renames the config file removing
+the suffix .disable from it, so the next time it uses its own PXE configuration.
 .TP
 .B \-E
 Add FAI_FLAG initial. This causes setup-storage to disable preserving
@@ -140,7 +140,7 @@ Same as \-i but also sets FAI_ACTION=sysinfo.
 .TP
 .BI "\-u " URL
 Set FAI_CONFIG_SRC to URL. Setting this variable is mandatory for
-the operation of FAI.
+the operation of FAI. See fai.conf(5) for the format of this variable.
 .TP
 .BI "\-U " URL
 Add URL to kernel and initrd file names. lpxelinux.0 can use FTP and
@@ -156,7 +156,7 @@ fai-chboot \-FSPv -u nfs://faiserver/srv/fai/config atom02
 The host atom02 will boot the FAI install kernel but with FAI_ACTION sysinfo.
 .TP
 fai-chboot \-l tmpl
-All templates are lsited.
+All templates are listed.
 .TP
 fai-chboot \-IBPv -u nfs://faiserver/srv/fai/config atom02
 The host atom02 will be installed. ATTENTION! All data on the local

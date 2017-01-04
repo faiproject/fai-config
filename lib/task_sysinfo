@@ -60,6 +60,7 @@ lspci
 # start software raid
 /usr/share/mdadm/mkconf > /etc/mdadm/mdadm.conf
 /etc/init.d/mdadm-raid start
+/etc/init.d/lvm2 start
 
 for device in /dev/sd?; do
     [ -b "$device" ] || continue # make sure device exists and is valid block device
@@ -87,10 +88,16 @@ done
 
 fdisk -lu
 
+dmsetup ls
+
 # show lvm information
 pvs;vgs;lvs
 
+btrfs fi show
+
 fai-mount-disk -f
+[ -f $target/etc/fstab ] && cp -p $target/etc/fstab $LOGDIR
+
 df -PTh | egrep ':|^/|^Filesystem'
 # - - - - - - - - - - -
 save_dmesg

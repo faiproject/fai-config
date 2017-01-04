@@ -1,4 +1,4 @@
-PACKAGES aptitude
+PACKAGES install-norec
 
 iceweasel
 #icedove
@@ -6,5 +6,5 @@ menu gdm3
 gnome-core
 gconf-editor
 gnome-screensaver gnome-system-monitor gnome-system-tools
-gnome-network-admin
 libgnomevfs2-bin
+network-manager-gnome

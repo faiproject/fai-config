@@ -11,7 +11,7 @@
 .\" .br        insert line break
 .\" .sp <n>    insert n+1 empty lines
 .\" for manpage-specific macros, see man(7)
-.TH "fai-class" "1" "4 October 2011" "FAI 4" ""
+.TH "fai-class" "1" "23 September 2015" "FAI 4" ""
 .SH "NAME"
 fai\-class \- define classes using files and scripts.
 .SH "SYNOPSIS"
@@ -22,13 +22,13 @@ This command is only called internally by FAI and not directly by the user.
 
 fai\-class executes scripts in DIRECTORY to define classes. All classes
 are written to CLASSFILE, each class on a separate line. Use absolute paths
-for both arguments. All scripts or executables matching "[0\-9][0\-9]*"
-are executed in alphabetical order. They can define classes by writing
+for both arguments. All scripts or executables matching "^[0\-9][0\-9]*"
+(they start with two digits) are executed in alphabetical order. They can define classes by writing
 the names of the classes to stdout. Classes can be separated by spaces
 or written one on a line. All lines that start with a "#" are comment
 lines and are ignored.
 
-Shell scripts that end in ".source" are sourced and can define classes
+Shell scripts that end in ".sh" are sourced and can define classes
 by setting the variable $newclasses. This is useful for scripts where
 you can't control stdout. Variables that are defined in these scripts
 are available to other scripts in DIRECTORY, but they are not exported
@@ -52,7 +52,7 @@ kernel command line.
 
 Finally, the class with the hostname and LAST are defined.
 
-It's important that each line in a file containg a class name ends
+It's important that each line in a file containing a class name ends
 with a newline. If the newline is missing on the last line of a file,
 this class can't be added.
 

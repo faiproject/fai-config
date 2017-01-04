@@ -11,12 +11,14 @@ usr/lib/fai/fai-divert
 usr/lib/fai/mkramdisk
 usr/lib/fai/fetch-basefile
 usr/lib/fai/task_inventory
+usr/lib/fai/mount2dir
 usr/bin/device2grub
 usr/bin/fai-class
 usr/bin/fai-debconf
 usr/bin/fai-do-scripts
 usr/bin/ainsl
 usr/bin/fai-deps
+usr/bin/fai-kvm
 usr/sbin/fai
 usr/sbin/fcopy
 usr/sbin/ftar

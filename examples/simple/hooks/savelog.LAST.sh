@@ -10,7 +10,8 @@ errfile=$LOGDIR/error.log
 globalerrorpatterns="error
 fail
 warn
-bad
+ bad
+bad 
 no space
 syntax
 Couldn't stat
@@ -23,6 +24,7 @@ not found
 couldn't
 can't
 E: Sorry, broken packages
+^E: 
 operator expected
 ambiguous redirect
 No previous regular expression
@@ -52,6 +54,7 @@ kolab-webadmin
 kolabadmin
 gstreamer0.10-plugins-really-bad
 liberrors.so
+liberrors-samba
 gsambad
 libad
 libtest-nowarnings-perl
@@ -62,8 +65,7 @@ libroxen-errormessage
 liberror-perl
 libgpg-error-dev
 libgpg-error0
-^fstab.\+errors=remount
-Opts: errors=remount-ro
+Opts:.\+errors=remount
 [RT]X packets:
 WARNING: unexpected IO-APIC
 warned about = ( )
@@ -114,7 +116,6 @@ register_serial(): autoconfig failed
 Fontconfig error: Cannot load default config file
 asking for cache data failed
 However, I can not read the target:
-fai-kernels/modules.dep: No such file
 Warning: The partition table looks like it was made
 task_error=0
 ^info: Trying to set
@@ -143,6 +144,16 @@ ERST: Error Record Serialization Table (ERST) support is initialized
 ERST: Table is not found
 HEST: Table not found
 failed to stat /dev/pts
+Failed to connect to socket /var/run/dbus/system_bus_socket
+fail to add MMCONFIG information
+can't initialize iptables table
+can't initialize ip6tables table
+Authentication warning overridden
+41-warning.sh
+update-alternatives: warning: skip creation of
+loop: module verification failed: signature
+Warning: apt-key output should not be parsed
+WARNING: Failed to connect to lvmetad. Falling back to device scanning
 update-rc.d: warning: start and stop actions are no longer supported"
 
 # add pattern on some conditions
@@ -154,8 +165,8 @@ fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Here you can define your own patterns. Put one pattern in a line,
 # do not create empty lines.
-myerrorpatterns="XXXXX"
-myignorepatterns="XXXXX"
+myerrorpatterns="X_X-X_XX"
+myignorepatterns="X_X-X_XX"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # The main routine
 errorpatterns="$globalerrorpatterns
@@ -170,7 +181,7 @@ if [ -s $errfile ]; then
 fi
 
 grep -i "$errorpatterns" *.log | grep -vi "$ignorepatterns" > $errfile
-if [ "$verbose" ]; then
+if [ X$verbose = X1 ]; then
     egrep -v '^software.log:' $errfile > $LOGDIR/tempfile
     mv $LOGDIR/tempfile $errfile
 fi

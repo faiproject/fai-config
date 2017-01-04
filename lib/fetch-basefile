@@ -23,7 +23,7 @@ mount_ramdisk() {
 
 [ X$FAI_BASEFILEURL = X ] && exit 0
 url=$FAI_BASEFILEURL
-[ "$verbose" ] && echo "Fetching basefile from $url"
+[ X$verbose = X1 ] && echo "Fetching basefile from $url"
 
 error=0
 found=0
@@ -60,6 +60,8 @@ for c in $revclasses; do
       # hash lookup succeeded
         found=1
         [ $mount = 1 ] && mount_ramdisk
+        # Create folder in case it is not part of the configuration space
+        mkdir -p $FAI/basefiles || echo "Could not create folder $FAI/basefiles" >&2
         cd $FAI/basefiles || exit 3
         if [ -f ${!id} ]; then
             echo "${!id} already exists" >&2

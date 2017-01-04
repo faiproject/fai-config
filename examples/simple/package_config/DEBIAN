@@ -1,20 +1,26 @@
-PACKAGES aptitude I386
-linux-image-686 initramfs-tools
+PACKAGES install I386
+linux-image-686-pae initramfs-tools
 memtest86+
 
-PACKAGES aptitude CHROOT
-linux-image-686-
+PACKAGES install CHROOT
+linux-image-686-pae-
 linux-image-amd64-
 
-PACKAGES aptitude AMD64
+PACKAGES install AMD64
 linux-image-amd64 initramfs-tools
 memtest86+
 
-PACKAGES aptitude XEN
-linux-image-amd64 initramfs-tools
-
-PACKAGES aptitude DHCPC
+PACKAGES install DHCPC
 isc-dhcp-client
 
-PACKAGES aptitude GRUB_PC
-grub-pc grub-legacy- lilo-
+PACKAGES install GRUB_PC
+grub-pc
+
+PACKAGES install GRUB_EFI
+grub-efi
+
+PACKAGES install LVM
+lvm2
+
+PACKAGES install CLOUD
+locales-all

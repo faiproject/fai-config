@@ -1,3 +1,405 @@
+fai (5.3.3~beta2) unstable; urgency=low
+
+  * setup-storage: do execute raid/lvm parts only if needed
+    Closes: #845428
+  * LAST/50-misc: do raid/lvm test only if installation is run on client
+  * fai-cd: add -p to grub-mkimage call
+  * disk_config/CLOUD: fix option name
+
+ -- Thomas Lange <lange@debian.org>  Wed, 04 Jan 2017 17:26:49 +0100
+
+fai (5.3.2) unstable; urgency=low
+
+  [ Thomas Lange ]
+  * install_packages: readd -N, new code for removing unknown package
+    names and handling multiple occurrences of a package with suffix + -
+  * fai-make-nfsroot: create /var/lib/dpkg/available during package
+    installation
+  * fai-mirror: call install_packages with -N
+
+  [ Emmanuel Kasper ]
+  * fai-diskimage: improve LVM test
+
+ -- Thomas Lange <lange@debian.org>  Mon, 12 Dec 2016 15:01:47 +0100
+
+fai (5.3.1) unstable; urgency=low
+
+  [ Thomas Lange ]
+  * fai-monitor-gui: ignore lines matching ^VARIABLE
+  * CENTOS: disable selinux
+  * savelog.LAST.sh: add ignore pattern
+  * remove unsafe-io config at the end
+  * UBUNTU/90-apt: fix setting locale
+
+  [ Andrew bezella ]
+  * fai-make-nfsroot: improve test
+
+  [ dpoon ]
+  * fai-disk-info
+
+ -- Thomas Lange <lange@debian.org>  Tue, 06 Dec 2016 16:06:00 +0100
+
+fai (5.3) unstable; urgency=high
+
+  [ Thomas Lange ]
+  * install_packages: add new keyword install-norec,
+    calling apt-get without recommends, remove option -N
+    remove check for packages names using AptPkg::Cache
+  * control: add Depends, Breaks, Closes: #842083
+  * fai-diskimage: add -N, which is passed to the fai call,
+    Closes: #843209, do not run if host uses LVM
+  * fai: allow -N and -c at the same time
+  * package_config/DEBIAN: add locales-all for class CLOUD
+  * packages_config/*: use install-norec instead of aptitude
+  * disk_config/CLOUD: use only one partition
+  * init.d/expand-root: new script used at first time boot up
+  * class/*/GCE: improve class GCE, add expand-root
+  * fai-mirror: remove test that prevents it to call multiple times
+  * fai, config space: remove $action and use $FAI_ACTION from the very
+    beginning
+  * class/[01-classes,02-classes]: new scripts for defining classes from
+    $cmdlineclasses
+  * subroutines: save dmesg only if running on a client host
+  * 10-misc: add test if localtime is a symlink, Closes: #843780
+  * setup-storage.8: add EFI/ESP example, Closes: #843593
+
+  [ Josef Lusticky ]
+  * fai-make-nfsroot: use apt-key to export gpg key for fai-project.org
+    package repository
+
+  [ Sam Hartman ]
+  * add EFI suppoort, Closes: #843639
+  * Commands.pm: Fix handling of btrfs single volume devices,
+    Closes: #843716
+
+ -- Thomas Lange <lange@debian.org>  Mon, 21 Nov 2016 13:10:38 +0100
+
+fai (5.2) unstable; urgency=low
+
+  The "FAI is entering the cloud" release.
+
+  [ Thomas Lange ]
+  * fai-diskimage: new script, create disk images for VM or "The Cloud"
+  * fai-diskimage.8: new man page
+  * .../GCE: new class GCE for Google Compute Engine customization
+  * updatebase: execute aptitude only if it's available, Closes: #831547
+  * fcopy: print warning only in debug mode, Closes: #826897
+  * fai-class: do not read hostname from /proc if $HOSTNAME is already
+    set, Closes: #833987
+  * subroutines: do not always call bash in die()
+    set NIC1 before entering a loop
+    be less verbose
+  * make use of |& shortcut
+  * activate swap only during inital install
+  * fai: code cleanup, remove unused code, set $classes if -c is used
+  * setup-storage: remove code that handles loop devices, no special
+    handling needed, do not try to determine raid and lvm info if tools
+    are missing
+  * move mount2dir into fai-client
+  * add class/41-warning.sh
+  * remove user/password in grub.cfg for fai-cd
+  * setup.DEFAULT.sh: set hostname only during inital install
+  * mk-basefiles: add usage, add generic subroutine for Debian and Ubuntu,
+    new options -a, -k -s, cleanup exclude list
+  * GRUB_PC/10-setup: special treatment if a disk image is used
+    do not set up grub during dirinstall
+  * fai-kvm: when booting from disk, you can specify a disk image
+  * disk_config/CLOUD: new config, new class
+  * replace test [ "$verbose" ] with [ X$verbose = X1 ]
+  * fai-do-scripts: be less verbose
+  * sources.list: add [trusted=yes] to fai-project.org line
+  * fai-mirror: remove --force-yes
+  * instsoft.DEBIAN: reconfigure locales if already installed
+  * rc.local/FAISERVER: make fai-monitor start on every boot
+  * fai-guide.txt: add section about fai-diskimage
+  * control: suggest packages for fai-server needed by fai-diskimage
+  * LAST/50-misc: create a useful sources.list if installed from CD
+
+  [ Andrew bezella ]
+  * get-config-dir-http: prefix the curl command with HOME=/root
+  * NFSROOT: add ca-certificates
+  * instsoft.DEBIAN: don't exit hook on dirinstall
+  * scripts/FAISERVER,DEBIAN: copy file also during dirinstall
+
+  [ Edgar Fuß ]
+  * fcopy: fix for fcopy -H -r fail to copy a symlink in case it points to
+    an existing directory
+
+  [ Stefan Lauterwasser ]
+  * setup-storage: add support for Intel Matrix Storage Manager
+
+  [ Kerim Güney ]
+  * setup-storage: Device name issue when using btrfs on NVMe device,
+    Closes: #831327
+    Fix for when btrfs device was used as boot device, the variable
+    necessary for the grub script would not be set.
+
+  [ Paul Schulz ]
+  * setup-storage.8: add documentation for luks add cryptsetup
+
+  [ Andrew Ruthven ]
+  * setup-storage: Add lukscreateopts to disk config file.
+
+  [ Ian Kelling ]
+  * 30-interface: determine predictable network names, Closes: #834817
+
+ -- Thomas Lange <lange@debian.org>  Fri, 18 Nov 2016 15:40:12 +0100
+
+fai (5.1.2) unstable; urgency=low
+
+  * fai-cd: mount /proc before calling dracut
+  * savelog.LAST.sh: improve regex
+
+ -- Thomas Lange <lange@debian.org>  Thu, 15 Sep 2016 04:09:47 +0200
+
+fai (5.1.1) unstable; urgency=low
+
+  * use Xenial for Ubuntu
+  * control: update standards version
+
+ -- Thomas Lange <lange@debian.org>  Thu, 30 Jun 2016 22:04:23 +0200
+
+fai (5.1) unstable; urgency=low
+
+  [ Thomas Lange ]
+  * add support for 4.x kernel using overlayfs and dracut >= 044+150-1
+  * dhcp-edit: fix regex
+  * NFSROOT: add dracut-core, remove cupt, module-init-tools
+  * fai-mount-disk: use glob instead of backtick
+  * fai-make-nfsroot: force some cp calls, adding aufs is not needed in
+    config
+  * fai-chboot: automatic test if aufs or overlayfs is needed
+  * grub.cfg.autodiscover: use aufs and rootovl
+  * add support for sftp, scp, https to get-config-dir
+  * install_packages: ad support for apt
+  * start sshd if flag is defined early
+  * ftar: syntax fix, do not use FAI_CLASSES if -c is used
+  * subroutines: remove unsuded code in task_faiend()
+  * get-boot-info: match new network device names, remove unneeded code
+  * add lvm support to CentOS 7, improve CentOS 6
+  * control: new package name in Suggests
+  * grub.cfg: add queit to cmdline
+
+  [ Andrew bezella ]
+  * instsoft.DEBIAN: fix regex
+  * do not change hostname during dirinstall, ignore md/lvm during
+    dirinstall
+  * write /etc/network/interfaces also on dirinstal
+  * DEBIAN.var: fix syntax error
+
+  [ remy.d1@gmail.com ]
+  * mk-basefile: add xenial support
+
+ -- Thomas Lange <lange@debian.org>  Tue, 28 Jun 2016 10:31:25 +0200
+
+fai (5.0.3) unstable; urgency=low
+
+  [ Thomas Lange ]
+  * move code from task_confdir to task_setup, Closes: #813626
+  * updatebase: do not divert invoke-rc.d, closes: #814841
+  * task_sysinfo: copy fstab to LOGDIR if found on disk
+
+  [ Kerim Güney ]
+  * device2grub,fai-disk-info: add support for NVMe devices
+
+  [ Ian Kelling ]
+  * docs: consistent usage of key file
+
+ -- Thomas Lange <lange@debian.org>  Wed, 09 Mar 2016 11:07:18 +0100
+
+fai (5.0.2) unstable; urgency=low
+
+  * load_keymap_consolechars: fix wrong file name, Closes: #812789
+  * fai-scan.sh: fix for parsing option fai.discover
+  * fai-kvm: add support for booting from disk
+  * examples: use lightdm instead of xdm
+  * fai-cd: better regex for copying files, preserve owner
+  * create empty key file if it does not exist
+  * rc.local/FAISERVER: better pattern for ainsl
+  * fai-guide.txt: fix URL
+
+ -- Thomas Lange <lange@debian.org>  Wed, 27 Jan 2016 13:44:53 +0100
+
+fai (5.0.1) unstable; urgency=low
+
+  * fai-make-nfsroot: fix calling without -v does not setup ssh,
+    also set classes when using -k, add subroutine setclasses
+  * new hook setup.DEFAULT.sh sets short hostname
+  * UBUNTU: add demo user to more groups
+  * read and write hostname using /proc instead calling hostname
+  * fix file name in sources.list.d/
+  * use flask theme for html version of fai-guide
+  * fai-mirror: add -b, call install_packages with -N, initialize variable
+  * fai-kvm: use different default title
+  * 20-hwdetect.sh: fix test
+  * UBUNTU/90-apt: create sources.list, do not use template
+
+ -- Thomas Lange <lange@debian.org>  Thu, 10 Dec 2015 21:37:01 +0100
+
+fai (5.0) unstable; urgency=low
+
+  [ Thomas Lange ]
+  * major rewrite of the FAI guide
+  * extrbase.IMAGE: new hook that installs from a file system image
+    this is tested with Ubuntu 14.04 and CentOS 7
+  * fcopy: use xattrs, acl and selinux options if available
+  * use httpredir.debian.org instead of http.debian.net
+  * fai: fix test, Closes: #780733
+  * fai-mount-disk: now support lvm and RAID: Closes: #769229
+  * fai-mount-disk: add option -w, add btrfs support
+  * use .sh instead of .source suffix for file being sourced
+  * do not add machine-id into base file, create a new one Closes: #787235
+  * fai-monitor: add reply function which is used for autodiscover
+  * fai-monitor.8: add info about the new protocol extensions
+  * install_packages, get-config-dir-http: use curl instead of wget
+  * fai-make-nfsroot: remove option -l, add otion -z, use xz as default
+    compression,
+    use os-release to define more classes for install_packages,
+    use fcopy for sources.list if it's not a file
+    remove more files if building generic nfsroot
+    add test if sysvinit-core was installed
+    setup ssh environment when using -a
+    use apt-get instead of aptitude
+    do not install recommends inside nfsroot
+    install dracut-* packages early, they are now hardcoded here
+    add dracut.conf.d files to make initrd smaller
+    check if some essential packages are installed
+    use environment variable APTPROXY
+    add the key of the fai-project package repository
+    make sure to install fai-nfsroot before other packages
+    add livenet module, which is needed for getting the nfsroot via http
+  * fai-setup: also add config space dir to exports, new home dir for
+    LOGUSER, exit with correct error code
+  * fai-cd: add -A, -J, -e, fix xorriso options to USB sticks bootable
+    do only copy dists and pool dirs from mirror, do not put
+    resolv.conf onto the CD, add more dirs to hide list
+    do not add memtest menu entry on bootonly CD
+  * grub.cfg: add --unrestricted to some menu entries, handle boot from
+    local disk via chainloader more advanced
+    add entry for FAI server with fixed IP
+    do not enable networking for the rescue boot entry
+  * install_packages: add dnf support
+  * subroutines: print execution time for each task if $duration is set
+    do not print hash of ROOTPW
+    new subroutine read_fai_monitor_vars, called by task_confdir
+    check if kernel modules dir matches the kernel version
+    check only for network or CD installation, Closes: #788230
+    print disk_config if an error occurs within setup-storage
+    put apt keys into separate files
+  * control: add mksquashfs-tools
+  * fai-mirror: take arch into account in base-pkgs.lis, do not remove
+    reprepro dirs in mirror, fix order of getting packages,
+    preserve reprepro config files,
+    also use files in /etc/fai/apt/sources.list.d
+    add option -P, Thanks to Andreas Heinlein for the patch
+    save and restore sources.list, use xz instead of bz2
+  * dhcp-edit: make restart_dhcpd more quiet, allow non-root if using -d
+  * fai.conf: add detailed info about FAI_CONFIG_SRC format
+  * fai-kvm: add option -D, -V, -U, -N, -t, disable floppy disk
+    increase default dis size, improve help
+  * add fai-kvm to package fai-client
+  * new script fai-mk-network for creating test networks
+  * NFSROOT: use class DEBIAN_8, do not install systemd-sysv into the
+    nfsroot, add dracut-config-generic, use curl instead of wget
+  * increase MAXPACKAGES
+  * 10-setup: call update-grub later, disable os-prober because of #788062
+  * package_config: add desktop-base for nicer grub and desktop background
+  * 20-capabilities: add fping executables, print message on success
+  * get-config-dir-http: add ram disk before extracting, remove md5sum
+    checking
+  * simple examples: fix SELinux problems with CentOS 7, fix gnome package
+    name, use apt-get instead of aptitude for linux-image packages,
+    xfcehost now uses lvm partitions,
+    add templates for sources.list for UBUNTU and GNOME, generate Ubuntu
+    sources.list dynamically via netselect
+  * add Ubuntu profile
+  * major improve of FAISERVER example, setup of FAI server done by
+    rc.local
+  * 20-hwdetect.source: fix setting $disklist, calling set_disk_info is
+    insufficient
+    50-host-classes: set class DHCP depending on the content of the ip=
+    parameter of the kernel command line
+  * 40-parse-profiles.sh: new script for creating a curses based menu
+  * Commands.pm: use parted instead of sfdisk for setting boot flag
+    Closes: #798390
+  * Fstab.pm: put comments on a seperate line, Closes: #784842
+    Thanks to Raphael Geissert for the patch
+  * task_sysinfo: start lvm, Closes: #769229, print also btrfs infos
+  * fai-chboot: add support for writing .tmpl files, new default (-1) for
+    localboot, search nfsroot for kernel suffix, several fixes
+  * fai-chboot.8: improve -d, -e description, Closes: #800475
+  * create_resolv_conf: use dracut's resolv.conf if available
+  * fai-nfsroot2image removed, this can now be done using fai-cd
+  * fai-savelog: return error code if scp fails
+  * subroutines: call task_error after fai-savelog -r
+  * get-boot-info: do not use DHCP hostname if already set
+  * drop support for old script names which were changed in 4.0
+  * add dracut module for fai autodiscover, add grub.cfg.autodiscover
+  * instsoft.DEBIAN: add ucf example, Closes: #313397, #502394
+  * mk-basefile: update Ubuntu support
+  * fai: if no hostname was set, use IP for setting the hostname
+  * 40-misc: create mtab symlink
+
+  [ Kerim Güney ]
+  * fai-cd: use dracut instead of live-boot, remove option -n, -k,
+    add option -S, -A
+  * grub.cfg: adjust option for booting with dracut
+  * Exec.pm: print original error message if no predefined message is
+    detected
+  * Commands.pm: Allow single device/partition btrfs configurations using
+    the same simple disk_config syntax as for ext4 etc.
+    Prevent setup-storage from attempting to run mkfs twice for single
+    device btrfs filesystems
+    Remove hardcoded fstabkey and enables using label and uuid for btrfs
+    Don't disable volume groups that need to be preserved, Closes: #787843
+    implement test for btrfs/lvm create options, Closes: #750212
+  * setup-storage: support parted's old "resize" command and also the new
+    "resizepart", add support for parted >=2.4, Closes: #785804
+    enable installation of LVM volume groups directly onto an
+    unpartitioned disk.
+  * Fstab.pm: list all btrfs devices in comment line
+  * Parser.pm: Catch disk config that dictates preserving a partition that
+    doesn't exist
+  * setup-storage: test if we need a reload or restart of the nfs server
+  * fai-guide: review and update
+
+  [ Thomas Neumann ]
+  * Fstab.pm: use local variable instead of global, remove &FAI:: from
+    local function
+
+  [ Moritz 'Morty' Strübe ]
+  * fetch-basefile: create basefiles-folder if it does not exist
+  * fai-make-nfsroot: fix check for /sbin/init
+  
+ -- Thomas Lange <lange@debian.org>  Mon, 23 Nov 2015 19:09:12 +0100
+
+fai (4.3.3) unstable; urgency=high
+
+  * setup-storage: add support for parted >=2.4, Closes: #785804
+
+ -- Thomas Lange <lange@debian.org>  Tue, 26 May 2015 12:56:26 +0200
+
+fai (4.3.2) unstable; urgency=low
+
+  [Thomas Lange]
+  * fai: Fix IP address lifetime, Closes: #780144
+    Thanks to Christian Seiler
+  * fai-cd:  check the file inside the nfsroot, Closes: #776417
+  * fai-savelog: remove trailing slash, Closes: #772079
+  * ftar: use --numeric-owner when extracting, Closes: #759273
+  * add variable $FAI_MONITOR_PORT
+  * grub.cfg: replace chainloader with multiboot command
+  * fai-disk-info, Init.pm: add regex for FusionIO devices
+  * install_packages: change perl syntax, thanks to Rainer Müller for the
+    patch
+  *get-config-dir: create $FAI directory
+  * update copyright dates
+
+  [ Kerim Güney ]
+  * Commands.pm: add proper prerequisites for btrfs
+
+ -- Thomas Lange <lange@debian.org>  Tue, 17 Mar 2015 13:19:55 +0100
+
 fai (4.3.1+deb8u1) jessie; urgency=high
 
   * setup-storage: add support for parted 2.4, Closes: #785804

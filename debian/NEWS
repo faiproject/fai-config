@@ -1,3 +1,33 @@
+fai (5.2) unstable; urgency=low
+
+  * new command fai-diskimage creates bootable disk images for your VM
+
+ -- Thomas Lange <lange@debian.org>  Fri, 30 Sep 2016 19:33:47 +0200
+
+fai (5.0) unstable; urgency=low
+
+  * major rewrite of the FAI guide
+  * new autodiscover function, the client is searching the network
+    for a FAI server
+  * FAI profiles extend the FAI class concept
+  * FAI shows a curses based menu for selecting a profile on demand
+  * ready-to-go setup of the FAI server using the FAI CD or USB stick
+  * ready-to-go FAI profile for CentOS 7 and Ubuntu 14.04
+  * Cloning machines using an image (hook debconf.IMAGE)
+  * action sysinfo now also mounts lvm and RAID devices
+  * use httpredir.debian.org as default
+  * fai-cd now uses dracut instead of live-boot,
+    use of squashfs creates smaller CD images,
+    fai-cd replaces fai-nfsroot2image
+  * files *.source are renamed to .sh
+  * dnf support for rpm based distributions
+  * improved btrfs support
+  * new command fai-kvm for starting a virtual machine
+  * new command fai-mk-network for setting up different test networks
+  * fai-cd: no networking for the rescue boot entry by default
+
+ -- Thomas Lange <lange@debian.org>  Fri, 30 Sep 2016 15:16:31 +0200
+
 fai (4.3) unstable; urgency=low
 
   * add btrfs support to setup-storage
@@ -51,7 +81,7 @@ fai (4.0) unstable; urgency=low
   - add variable AINSL_TARGET
   - new log file fai-monitor.log on the install client
 
- -- Thomas Lange <lange@debian.org>  Fri, 23 May 2014 13:08:10 +0200
+ -- Thomas Lange <lange@debian.org>  Tue, 10 Apr 2012 11:48:33 +0200
 
 fai (3.4.4) unstable; urgency=low
 

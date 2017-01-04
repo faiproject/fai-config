@@ -1,10 +1,14 @@
-PACKAGES aptitude
+PACKAGES install-norec
 fai-quickstart
 
 isc-dhcp-client
 debmirror tcpdump
 xorriso grub-pc
-lftp
-syslinux-common # for jessie: pxelinux
+lftp curl
+netselect
+syslinux-common pxelinux
 apt-cacher-ng
 nscd psmisc
+bind9 dnsutils
+iptables-persistent
+emacs24-nox

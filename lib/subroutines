@@ -5,7 +5,7 @@
 # subroutines -- useful subroutines for FAI
 #
 # This script is part of FAI (Fully Automatic Installation)
-# (c) 2000-2014 by Thomas Lange, lange@informatik.uni-koeln.de
+# (c) 2000-2016 by Thomas Lange, lange@informatik.uni-koeln.de
 # Universitaet zu Koeln
 # (c) 2001-2005 by Henning Glawe, glaweh@physik.fu-berlin.de
 # Freie Universitaet Berlin
@@ -37,7 +37,7 @@ die() {
     [ -f $LOGDIR/skip.savelog ] || call_hook savelog
     [ -f $LOGDIR/skip.savelog ] || task_savelog
     echo "$@"
-    if [ X$FAI_ACTION = Xinstall ]; then
+    if [ $do_init_tasks -eq 1 ] ; then
         exec bash -i
     else
         exit 99
@@ -120,6 +120,7 @@ rwmount() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 save_dmesg() {
 
+    [ $do_init_tasks -eq 0 ] && return
     if [ -x /usr/sbin/logtail ] ; then
       logtail -f /var/log/kern.log -o /var/lib/fai/kern.log.offset >> $LOGDIR/dmesg.log
     else
@@ -183,6 +184,8 @@ task_error() {
 # Short-Description: call a certain task
 ### END SUBROUTINE INFO
 
+declare -A taskduration
+export duration=0
 task() {
 
     # hooks are called before a task is called
@@ -197,14 +200,16 @@ task() {
     if [ -f $LOGDIR/skip.$taskname ]; then
         # skip task
         rm $LOGDIR/skip.$taskname # TODO: remove skip files at the very end
-        [ "$verbose" ] && echo "Skiping task_$taskname"
+        [ X$verbose = X1 ] && echo "Skipping task_$taskname"
         sendmon "TASKSKIP $taskname"
     else
         echo "Calling task_$taskname"
         sendmon "TASKBEGIN $taskname"
         task_error=0   # task can set this variable to indicate an error
         task_error_func=''
+        taskduration[$taskname]=$SECONDS
         task_$taskname "$@"
+        [ $duration -eq 1 ] && echo "Duration of task $taskname: " $(($SECONDS-${taskduration[$taskname]}))"s"
         sendmon "TASKEND $taskname $task_error"
         if [ "$task_error" -ne 0 ] ; then
           echo "Exit code task_$taskname: $task_error" >&2
@@ -215,7 +220,7 @@ task() {
 ### BEGIN SUBROUTINE INFO
 # Provides-Var:
 # Required-Var:      $classes $debug
-# Short-Description: call a hook, hook.source can define additional variables
+# Short-Description: call a hook, hook.sh can define additional variables
 ### END SUBROUTINE INFO
 
 call_hook() {
@@ -232,9 +237,13 @@ call_hook() {
             echo "WARNING: Skipping $hfile because it's not executable." >&2
             continue
         fi
-        if [ -f $hfile.source -a ! -x $hfile.source ]; then
-            echo "WARNING: Skipping $hfile.source because it's not executable." >&2
+        if [ -f $hfile.sh -a ! -x $hfile.sh ]; then
+            echo "WARNING: Skipping $hfile.sh because it's not executable." >&2
             continue
+        fi
+        if [ -f $hfile.source ]; then
+            echo "WARNING: The suffix .source is deprecated. Use .sh instead." >&2
+            # continue
         fi
         if [ -x $hfile ]; then
             echo "Calling hook: $hook.$cl"
@@ -243,7 +252,15 @@ call_hook() {
             $hfile $dflag "$@"
             check_status $hook.$cl $?
         fi
-        if [ -x $hfile.source ]; then
+        if [ -x $hfile.sh ]; then
+            echo "Source hook: $hook.$cl.sh"
+            sendmon "HOOK $hook.$cl.sh"
+            # source this hook
+            . $hfile.sh $dflag "$@"
+            check_status $hook.$cl.sh $?
+        fi
+        # deprecated
+	if [ -x $hfile.source ]; then
             echo "Source hook: $hook.$cl.source"
             sendmon "HOOK $hook.$cl.source"
             # source this hook
@@ -304,12 +321,19 @@ task_setup() {
         }
 
         # start secure shell daemon for remote access
-        mkdir -p /var/run/sshd # ubuntu fix for 9.10
         if [ "$flag_sshd" -a -x /usr/sbin/sshd ]; then
             pgrep -x sshd >/dev/null || /usr/sbin/sshd
         fi
     fi
     unset flag_createvt flag_sshd
+
+    # now you have enough time to make changes to the config space
+    # only for debugging
+    if [ -n "$flag_wait" ]; then
+        echo "Sleeping. Now you may change the config space in $FAI."
+        echo "Continue after killall sleep."
+        sleep 50000
+    fi
 
     # when did FAI start, using localtime
     : ${fai_rundate:=$(date +'%Y%m%d_%H%M%S')}
@@ -336,14 +360,16 @@ task_action() {
     echo "FAI_ACTION: $FAI_ACTION"
     case $FAI_ACTION in
         install)
-            if [ $do_init_tasks -eq 0 ]; then
+            if [ $target = "/" ]; then
                 echo "Cowardly refusing to run a FAI installation on a running system."
                 return
             fi
             echo Performing FAI installation. All data may be overwritten!
-            echo -ne "\a"; sleep 1
-            echo -ne "\a"; sleep 1
-            echo  -e "\a"; sleep 5
+	    if [ $do_init_tasks -eq 1 ] ; then
+		echo -ne "\a"; sleep 1
+		echo -ne "\a"; sleep 1
+		echo  -e "\a"; sleep 5
+	    fi
             task install
             task faiend
             ;;
@@ -415,7 +441,6 @@ task_defclass() {
     cfclasses=$(echo ${classes:-})
     cfclasses=${cfclasses// /.}
     [ "${debug:-}" ] && echo "cfclasses: $cfclasses"
-    # define a bash hash with all class names. Without this, ifclass does not work
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 _defvar() {
@@ -433,19 +458,19 @@ task_defvar() {
     cd $FAI/class
     for class in ${classes:-} ; do
         if [ -f $class.var -a -r $class.var ]; then
-            [ "$verbose" ] && echo "Executing $class.var"
+            [ X$verbose = X1 ] && echo "Executing $class.var"
             # show only lines with ++, we cannot use a pipe, since it would call
             # _devfar in a subprocess. Then, variables are not defined
             _defvar $class.var > $svar 2>&1
-            grep ^++ $svar
+            grep ^++ $svar|sed -e 's/ROOTPW=.*/ROOTPW=XXXXXXXXXXXXX/'
             rm $svar
         fi
     done
 
-    echo "Defining variables from additional.var"
     # /fai/class/* scripts or hooks can write variable definitions
     # to additonal.var. now source these definitions
     if [ -f $LOGDIR/additional.var -a -r $LOGDIR/additional.var ]; then
+        echo "Defining variables from additional.var"
         _defvar $LOGDIR/additional.var > $svar 2>&1
         grep ^++ $svar
         rm $svar
@@ -462,14 +487,21 @@ task_mountdisks() {
 
     [ ! -f $LOGDIR/fstab ] && die "No $LOGDIR/fstab created."
     # mount swap space
-    local sd
-    for sd in $SWAPLIST; do
-        swapon -p1 $sd && [ "$verbose" ] && echo "Enable swap device $sd"
-    done
+    if [ $do_init_tasks -eq 1 ]; then
+	local sd
+	for sd in $SWAPLIST; do
+            swapon -p1 $sd && [ X$verbose = X1 ] && echo "Enable swap device $sd"
+	done
+    fi
     mount2dir $FAI_ROOT $LOGDIR/fstab
     if [ "$?" -ne 0 ]; then
         sendmon "TASKERROR mountdisks 885"
         task_error 885
+    fi
+    if [ $do_init_tasks -eq 1 ] && ! mountpoint -q $target; then
+        echo "$target is not a mount point. Check your disk_config file."
+        sendmon "TASKERROR mountdisks 886"
+        task_error 886
     fi
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -503,6 +535,7 @@ task_savelog() {
     [ -f $LOGDIR/FAI_CLASSES ] && cp -pu $LOGDIR/FAI_CLASSES $FAI_ROOT/var/lib/fai
     [ -f $LOGDIR/disk_var.sh ] && cp -pu $LOGDIR/disk_var.sh $FAI_ROOT/var/lib/fai
     fai-savelog -r
+    task_error 410 $?
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### BEGIN SUBROUTINE INFO
@@ -537,41 +570,7 @@ task_faiend() {
         mount -o remount,ro $dir
     done
 
-    # if we run from CD or USB stick and did not any installation
-    if [ -d /lib/live/mount/medium -a X$FAI_ACTION = Xsysinfo ]; then
-	reboot -dfi
-    fi
-
-    # check if we are running from CD, live-boot
-    cddev=$(mount |grep /lib/live/mount/medium | awk '{print $1}')
-    if [[ $cddev =~ '/dev/sr' ]]; then
-        echo 1 > /proc/sys/dev/cdrom/autoeject
-        cat > /tmp/rebootCD <<'EOF'
-#! /bin/bash
- device=$1
-eject -m /dev/$device 2>/dev/null >/dev/null
-echo "Remove CDROM and press <RETURN> to continue reboot"
-read
-eject -t /dev/$device 2>/dev/null >/dev/null
-EOF
-
-        #reboot or halt?
-        if [ "$flag_halt" -gt "0" ]; then
-            echo "exec halt -dfp" >> /tmp/rebootCD
-        else
-            echo "exec reboot -df" >> /tmp/rebootCD
-        fi
-        chmod +x /tmp/rebootCD
-	[ -d $target/tmp ] && mv /tmp/rebootCD $target/tmp/rebootCD
-
-        sync
-        cdromdevice=$(awk '/ name:/ {print $3}' /proc/sys/dev/cdrom/info)
-
-        chroot $target /tmp/rebootCD $cdromdevice
-        # never reached, because chroot will reboot the machine
-        die "Internal error when calling /tmp/rebootCD." >&2
-    fi
-    umount $FAI_ROOT/proc
+    umount $FAI_ROOT/proc $FAI_ROOT/sys $FAI_ROOT/dev/pts 2>/dev/null
     umount -arf 2>/dev/null
 
     # reboot or halt?
@@ -580,7 +579,6 @@ EOF
     else
         exec reboot -df
     fi
-
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 task_install() {
@@ -752,16 +750,29 @@ eval_cmdline() {
 
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+read_fai_monitor_vars() {
+
+    # read variables which are received from the fai-monitor
+    if [ ! -s /run/initramfs/fai-variables ]; then
+	return
+    fi
+
+    eval `grep FAI_CONFIG_SRC /run/initramfs/fai-variables`
+    eval `grep FAI_FLAGS /run/initramfs/fai-variables`
+}
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### BEGIN SUBROUTINE INFO
 # Provides-Var:    $faimond $sendid $SERVER $monserver
 # Requires-Var:    $LOGDIR $FAI
-# Suggests-Var:    $monserver $FAI_SENDID
+# Suggests-Var:    $monserver $FAI_SENDID $FAI_MONITOR_PORT
 # Short-Description: <task desc.>
 ### END SUBROUTINE INFO
 
 task_confdir() {
 
     if [ $do_init_tasks -eq 1 ] ; then
+
+	read_fai_monitor_vars
         eval_cmdline
 
         get-boot-info
@@ -780,11 +791,15 @@ task_confdir() {
     # determine the name of the default network interface
     # try several times if dhclient needs some more time
     local i=0
+    NIC1=$(ip route | awk '/^default/ {print $5}')
     while [ ! "$NIC1" -a $i -lt 8 ]; do
         sleep 2
 	NIC1=$(ip route | awk '/^default/ {print $5}')
         (( i += 1 ))
     done
+    if [ -z "$NIC1" ]; then
+	NIC1=$(ip route | awk '/ dev / {print $3}')
+    fi
     export NIC1
 
     if [ -z "$SERVER" ]; then
@@ -796,14 +811,17 @@ task_confdir() {
 
     # check if monitor server is available
     : ${monserver:=$SERVER}
+    : ${FAI_MONITOR_PORT:=4711}
 
     if [ -z "$monserver" ]; then
         echo "No monitor daemon defined."
         faimond=0
     else
         faimond=1
-        MAC=$(< /sys/class/net/$NIC1/address)
-        PXE="01-"${MAC//:/-}
+	if [ -n "$NIC1" ]; then
+	    MAC=$(< /sys/class/net/$NIC1/address)
+            PXE="01-"${MAC//:/-}
+	fi
 
         : ${FAI_SENDID:=host} # set default if undefined
         case "$FAI_SENDID" in
@@ -818,22 +836,22 @@ task_confdir() {
             sendmon "TASKBEGIN confdir"
         else
             faimond=0
-            echo "Can't connect to monserver on $monserver port 4711. Monitoring disabled."
+            echo "Can't connect to monserver on $monserver port $FAI_MONITOR_PORT. Monitoring disabled."
         fi
+    fi
+
+    local mdir=/lib/modules/`uname -r`
+    if [ $do_init_tasks -eq 1 ] && [ ! -d $mdir ]; then
+        echo "ERROR: Kernel modules directory $mdir not available. Only found:"
+        ls -d /lib/modules/*
+        echo ""
+        task_error 790
     fi
 
     get-config-dir || {
         echo "Problems accessing the config space."
         die ""
     }
-
-    # now you have enough time to make changes to the config space
-    # only for debugging
-    if [ -n "$flag_wait" ]; then
-        echo "Sleeping. Now you may change the config space in $FAI."
-        echo "Continue after killall sleep."
-        sleep 50000
-    fi
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### BEGIN SUBROUTINE INFO
@@ -849,12 +867,18 @@ task_partition() {
         echo "setup-storage is now the default tool for partitioning."
     fi
 
-    [ ! -s $LOGDIR/disk_var.sh ] && setup-storage -X 2>&1 | tee $LOGDIR/format.log
+    [ ! -s $LOGDIR/disk_var.sh ] && setup-storage -X |& tee $LOGDIR/format.log
 
     # partitioning tool must create $LOGDIR/disk_var.sh file
     if [ ! -s $LOGDIR/disk_var.sh ]; then
+        local conffile=$(grep "Using config file:" $LOGDIR/format.log | cut -d: -f2 )
+        if [ -n "$conffile" ]; then
+            echo ""
+            echo "This is your disk_config file:"
+            cat $conffile
+        fi
+        echo ""
         task_error 710
-        cat $LOGDIR/format.log
         sendmon "TASKERROR partition 21"
         die "Partitioning tool did not create $LOGDIR/disk_var.sh file."
     fi
@@ -889,7 +913,7 @@ task_extrbase() {
     local fs=$FAI_ROOT/etc/fstab
 
     fetch-basefile
-    echo "Unpacking Debian base archive"
+    echo "Unpacking distro base archive"
     # remember, ftar extracts into $FAI_ROOT by default, so / means $FAI_ROOT/
     # copy the base file class based if it exists
     [ -d $FAI/basefiles ] && ftar -1v -s $FAI/basefiles /
@@ -897,8 +921,6 @@ task_extrbase() {
         if [ $do_init_tasks -eq 1 ]; then
             ftar -1v -c base -s /var/tmp /
         else
-            [ -d $NFSROOT/live/filesystem.dir/var/tmp ] &&
-               ftar -1v -c base -s $NFSROOT/live/filesystem.dir/var/tmp /
             [ -d $NFSROOT/var/tmp ] &&
                ftar -1v -c base -s $NFSROOT/var/tmp /
         fi
@@ -906,14 +928,13 @@ task_extrbase() {
         # if no base file was extracted, call debootstrap
         if [ ! -d $FAI_ROOT/etc ]; then
             echo "No base file found. Calling debootstrap."
-            [ -z "$FAI_DEBOOTSTRAP" ] && die "$FAI_DEBOOTSTRAP undefined. Aborting"
+            [ -z "$FAI_DEBOOTSTRAP" ] && die "\$FAI_DEBOOTSTRAP undefined. Aborting"
             call_debootstrap $FAI_DEBOOTSTRAP
             task_error 801 $?
         fi
     fi
     # now we can copy fstab
-    [ -f $fs ] && mv $fs $fs.old
-    [ -f $LOGDIR/fstab ] && cp -p $LOGDIR/fstab $fs
+    [ -f $LOGDIR/fstab ] && cp -S.old -bp $LOGDIR/fstab $fs
     # copy crypttab, if setup-storage created one
     [ -f $LOGDIR/crypttab ] && cp -p $LOGDIR/crypttab $FAI_ROOT/etc/crypttab
     # make /var/lib/dpkg a ramdisk
@@ -935,7 +956,7 @@ mount_mirror() {
     if mount $romountopt $FAI_DEBMIRROR ${FAI_ROOT}${MNTPOINT}; then
       [ "$debug" ] && echo "Mirror mounted from $FAI_DEBMIRROR to ${FAI_ROOT}${MNTPOINT}"
     else
-      sendmon "TASKERROR mirror $?"
+      sendmon "TASKERROR repository $?"
       die "Can't mount $FAI_DEBMIRROR"
     fi
 }
@@ -974,27 +995,33 @@ task_repository () {
         fi
     done
 
+    if [ X$verbose = X1 ]; then
+	v=-v
+    fi
+
     [ $do_init_tasks -eq 1 ] && FAI_ETC_DIR=/etc
 
     # some generale network files are needed on the client
     # resolv.conf is needed, /etc/hosts is useful in /target
     # use a file from the config space or from /etc inside the nfsroot
-    if ! fcopy -BMv /etc/resolv.conf ; then
+    if ! fcopy -BM $v /etc/resolv.conf ; then
         if [ "$(readlink -f /etc/resolv.conf)" = "$(readlink -f $FAI_ROOT/etc/resolv.conf)" ] ; then
             :
 	    # no need for copy since both are pointing to the same file
         else
-            cp -v /etc/resolv.conf $FAI_ROOT/etc
+            [ -f /etc/resolv.conf ] && cp $v /etc/resolv.conf $FAI_ROOT/etc
         fi
     fi
-    if ! fcopy -BMv /etc/hosts ; then
-	[ X$FAI_ROOT = X/ ] || cp -v /etc/hosts $FAI_ROOT/etc
+    if ! fcopy -M $v /etc/hosts ; then
+	[ X$FAI_ROOT = X/ ] || cp $v -bS.orig /etc/hosts $FAI_ROOT/etc
     fi
 
     # apt specific things
-    fcopy -BMv /etc/apt/sources.list || cp -v $FAI_ETC_DIR/apt/sources.list $FAI_ROOT/etc/apt
-    if ! fcopy -BMv /etc/apt/preferences; then
-        [ -f $FAI_ETC_DIR/apt/preferences ] && cp -v $FAI_ETC_DIR/apt/preferences $FAI_ROOT/etc/apt
+    if ! fcopy -BM $v /etc/apt/sources.list; then
+	[ -f $FAI_ETC_DIR/apt/sources.list ] && cp $v $FAI_ETC_DIR/apt/sources.list $FAI_ROOT/etc/apt
+    fi
+    if ! fcopy -BM $v /etc/apt/preferences; then
+        [ -f $FAI_ETC_DIR/apt/preferences ] && cp $v $FAI_ETC_DIR/apt/preferences $FAI_ROOT/etc/apt
     fi
     fcopy -BMir /etc/apt # copy all other apt config files from the config space
 
@@ -1003,6 +1030,8 @@ task_repository () {
 APT::Get::AllowUnauthenticated "true";
 Aptitude::CmdLine::Ignore-Trust-Violations yes;
 EOF
+    else
+	rm -f $FAI_ROOT/etc/apt/apt.conf.d/10fai
     fi
 
     # add apt keys for signed repositories
@@ -1017,7 +1046,8 @@ EOF
     for keyfile in ${classes:-}; do
         [ ! -f $FAI/package_config/$keyfile.asc ] && continue
         echo -n "Loading APT key from $keyfile.asc "
-        cat $FAI/package_config/$keyfile.asc | $ROOTCMD apt-key add -
+	[ -f $FAI_ROOT/etc/apt/trusted.gpg.d/$keyfile.asc.gpg ] || touch $FAI_ROOT/etc/apt/trusted.gpg.d/$keyfile.asc.gpg
+        cat $FAI/package_config/$keyfile.asc | $ROOTCMD apt-key --keyring /etc/apt/trusted.gpg.d/$keyfile.asc.gpg add -
         unset keys["$keyfile.asc"]
     done
 
@@ -1038,8 +1068,8 @@ task_updatebase() {
 
     # maybe the base system is not up to date
 
-    if [ "$verbose" ]; then
-        updatebase </dev/null 2>&1 | tee -a $LOGDIR/software.log
+    if [ X$verbose = X1 ]; then
+        updatebase </dev/null |& tee -a $LOGDIR/software.log
         task_error 474 ${PIPESTATUS[0]}
     else
         updatebase </dev/null >> $LOGDIR/software.log 2>&1
@@ -1049,12 +1079,14 @@ task_updatebase() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 task_instsoft() {
 
-    echo "Installing software may take a while"
+    if [ X$verbose = X1 ]; then
+	echo "Installing software may take a while"
+    fi
     if [ "$debug" ]; then
         install_packages | tee -a $LOGDIR/software.log
         task_error 471 ${PIPESTATUS[0]}
-    elif [ "$verbose" ]; then
-        install_packages </dev/null 2>&1 | tee -a $LOGDIR/software.log
+    elif [ X$verbose = X1 ]; then
+        install_packages </dev/null |& tee -a $LOGDIR/software.log
         task_error 471 ${PIPESTATUS[0]}
     else
         install_packages </dev/null >> $LOGDIR/software.log 2>&1
@@ -1068,20 +1100,22 @@ task_instsoft() {
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 task_finish() {
 
+    mkramdisk -au # umount ramdisk
     if [ $do_init_tasks -eq 1 ] ; then
         # show some local information
         df -PTh | egrep ':|^/|^Filesystem'
         # show rx and tx bytes of network device
         grep . /sys/class/net/*/statistics/*x_bytes | perl -ane 'm#/sys/class/net/(.+)/statistics/(.+):(\d+)# && ($3) && ($1 ne lo) && printf "%s %s %.2f Mbytes\n",$1,$2,$3/1000000 '
         swapoff -a
+    else
+        df -PTh | egrep "^Filesystem|$target"
     fi
 
-    mkramdisk -au # umount ramdisk
     # undo fake of all programs made by fai
     fai-divert -R
     rm -f $FAI_ROOT/etc/apt/apt.conf.d/{10,90}fai
     date
-    echo "The $FAI_ACTION took $[$(cut -d . -f 1 /proc/uptime)-$start_seconds] seconds."
+    echo "The $FAI_ACTION took $(($(cut -d . -f 1 /proc/uptime)-$start_seconds)) seconds."
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 task_chboot() {
@@ -1092,7 +1126,8 @@ task_chboot() {
 
     local frsh remotesh
     local doexit=0
-    local hostname=$(hostname)
+    local hostname
+    read hostname < /proc/sys/kernel/hostname
     local ipaddr=$(grep IPADDR $LOGDIR/boot.log | cut -d= -f2 | sed "s/'//g")
     local nexttest=$(egrep -s ^NEXTTEST= $LOGDIR/test.log | cut -d= -f2)
 
@@ -1134,7 +1169,7 @@ sendmon() {
     # send message to monitor daemon
     echo "$*" >> $LOGDIR/fai-monitor.log
     [ "$faimond" -eq 0 ] && return 0
-    echo "$sendid $*" | nc -w 8 $monserver 4711 2>/dev/null
+    echo "$sendid $*" | nc -w 8 $monserver $FAI_MONITOR_PORT 2>/dev/null
     return $?
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

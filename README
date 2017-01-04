@@ -20,7 +20,7 @@ The home page for FAI is
 
         http://fai-project.org/
 
-This release of FAI is tested with the Debian 7.0 and 8.0 release.
+This release of FAI is tested with the Debian 8 release.
 
 FAI is free software, distributed under the terms of the GNU General
 Public License, version 2. For more information, see the file
@@ -53,4 +53,4 @@ Institut fuer Informatik        mailto:lange@informatik.Uni-Koeln.DE
 
 4096R/074BCDE4 B11E E327 3F6B 2DEB 528C  93DA 2BF8 D9FE 074B CDE4
 ----------------------------------------------------------------------
-Copyright (c) 1999-2015 Thomas Lange. All rights reserved.
+Copyright (c) 1999-2016 Thomas Lange. All rights reserved.

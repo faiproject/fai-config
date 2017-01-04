@@ -32,6 +32,7 @@ use strict;
 ################################################################################
 
 use Parse::RecDescent;
+use Cwd qw(abs_path);
 use Storable qw(dclone);
 
 package FAI;
@@ -106,7 +107,7 @@ sub resolve_disk_shortname {
   ($disk =~ m{^/}) or $disk = "/dev/$disk";
   my @candidates = glob($disk);
   die "Failed to resolve $disk to a unique device name\n" if (scalar(@candidates) > 1);
-  $disk = $candidates[0] if (scalar(@candidates) == 1);
+  $disk = abs_path($candidates[0]) if (scalar(@candidates) == 1);
   die "Device name $disk could not be substituted\n" if ($disk =~ m{[\*\?\[\{\~]});
 
   return $disk;
@@ -130,9 +131,6 @@ sub init_disk_config {
   my ($disk) = @_;
 
   $disk = &FAI::resolve_disk_shortname($disk);
-
-  &FAI::in_path("losetup") or die "losetup not found in PATH\n"
-    if ((&FAI::loopback_dev($disk))[0]);
 
   # prepend PHY_
   $FAI::device = "PHY_$disk";
@@ -446,6 +444,7 @@ $FAI::Parser = Parse::RecDescent->new(
         {
           # check, whether raid tools are available
           &FAI::in_path("mdadm") or die "mdadm not found in PATH\n";
+          $FAI::uses_raid = 1;
           $FAI::device = "RAID";
           $FAI::configs{$FAI::device}{fstabkey} = "device";
           $FAI::configs{$FAI::device}{opts_all} = {};
@@ -459,6 +458,7 @@ $FAI::Parser = Parse::RecDescent->new(
           $FAI::configs{$FAI::device}{fstabkey} = "device";
           $FAI::configs{$FAI::device}{opts_all} = {};
         }
+        btrfs_option(s?)
         | 'cryptsetup'
         {
           &FAI::in_path("cryptsetup") or die "cryptsetup not found in PATH\n";
@@ -475,6 +475,7 @@ $FAI::Parser = Parse::RecDescent->new(
           &FAI::in_path("lvcreate") or die "LVM tools not found in PATH\n";
           # initialise $FAI::device to inform the following lines about the LVM
           # being configured
+          $FAI::uses_lvm = 1;
           $FAI::device = "VG_";
           $FAI::configs{"VG_--ANY--"}{fstabkey} = "device";
           $FAI::configs{"VG_--ANY--"}{opts_all} = {};
@@ -549,6 +550,11 @@ $FAI::Parser = Parse::RecDescent->new(
           } else {
             $FAI::configs{RAID}{volumes}{$_}{always_format} = 1 foreach (split (",", $1));
           }
+        }
+
+    btrfs_option: /^fstabkey:(device|label|uuid)/
+        {
+        $FAI::configs{$FAI::device}{fstabkey} = $1;
         }
 
     cryptsetup_option: /^randinit/
@@ -696,6 +702,10 @@ $FAI::Parser = Parse::RecDescent->new(
           # the information preferred for fstab device identifieres
           $FAI::configs{$FAI::device}{fstabkey} = $1;
         }
+	| /^vg:(\d+)/
+	{
+          $FAI::configs{$FAI::device}{vg} = $1;
+        }
 	| /^sameas:(\S+)/
 	{
 	  my $ref_dev = &FAI::resolve_disk_shortname($1);
@@ -804,7 +814,7 @@ $FAI::Parser = Parse::RecDescent->new(
           $FAI::partition_pointer = (\%FAI::configs)->{CRYPT}->{volumes}->{$vol_id};
           $FAI::partition_pointer_dev_name = "CRYPT$vol_id";
         }
-        mountpoint devices filesystem mount_options lv_or_fsopts
+        mountpoint devices filesystem mount_options lukscreate_or_lvopts
         | /^tmpfs\s+/
         {
           ($FAI::device eq "TMPFS") or die "tmpfs entry invalid in this context\n";
@@ -980,6 +990,7 @@ $FAI::Parser = Parse::RecDescent->new(
             # might be created later on
             unless ($dev =~ m{^/}) {
               if ($dev =~ m/^disk(\d+)\.(\d+)/) {
+                die "ERROR: No such disk disk$1\n" unless $FAI::disks[$1-1];
                 $dev = &FAI::make_device_name("/dev/" . $FAI::disks[ $1 - 1 ], $2);
               } elsif ($dev =~ m/^disk(\d+)/) {
                 $dev = "/dev/" . $FAI::disks[ $1 - 1 ];
@@ -1103,6 +1114,12 @@ $FAI::Parser = Parse::RecDescent->new(
         }
         | createtuneopt(s?)
 
+   lukscreate_or_lvopts: /lukscreateopts="([^"]*)"/ lv_or_fsopts(s?)
+        {
+          $FAI::partition_pointer->{lukscreateopts} = $1;
+        }
+        | lv_or_fsopts(s?)
+
     lv_or_fsopts: /lvcreateopts="([^"]*)"/ createtuneopt(s?)
         {
           $FAI::partition_pointer->{lvcreateopts} = $1;
@@ -1161,9 +1178,15 @@ sub check_config {
   # loop through all configs
   foreach my $config (keys %FAI::configs) {
     if ($config =~ /^PHY_(.+)$/) {
-      (scalar(keys %{ $FAI::configs{$config}{partitions} }) > 0) or
-        die "Empty disk_config stanza for device $1\n";
+      unless (exists($FAI::configs{$config}{vg}) && $FAI::configs{$config}{vg} == 1) {
+	(scalar(keys %{ $FAI::configs{$config}{partitions} }) > 0) or
+	  die "Empty disk_config stanza for device $1\n";
+      }
       foreach my $p (keys %{ $FAI::configs{$config}{partitions} }) {
+        # following catches if one attempts to use a partition that doesn't exist in the config file
+        if (!(defined($FAI::configs{$config}{partitions}{$p}{size}{range})) and $FAI::configs{$config}{partitions}{$p}{size}{extended} == 0) {
+          die "Cannot use non-existent partition (partition number $p). Please check your config.\n";
+        }
         next if (1 == $FAI::configs{$config}{partitions}{$p}{size}{extended});
         defined($FAI::configs{$config}{partitions}{$p}{mountpoint}) or
           &FAI::internal_error("Undefined mountpoint for non-extended partition");
@@ -1177,6 +1200,7 @@ sub check_config {
       }
     } elsif ($config =~ /^VG_(.+)$/) {
       next if ($1 eq "--ANY--");
+      next unless (keys %{ $FAI::configs{$config}{volumes} });
       (scalar(keys %{ $FAI::configs{$config}{volumes} }) ==
         scalar(@{ $FAI::configs{$config}{ordered_lv_list} })) or
         &FAI::internal_error("Inconsistent LV lists - missing entries");

@@ -5,14 +5,21 @@
 error=0; trap 'error=$(($?>$error?$?:$error))' ERR # save maximum error code
 
 echo $TIMEZONE    > $target/etc/timezone
-cp -f /usr/share/zoneinfo/${TIMEZONE} $target/etc/localtime
-
-if [ -n "$IPADDR" ]; then
-    ainsl -vs /etc/hosts "$IPADDR $HOSTNAME.$DOMAIN $HOSTNAME"
+if [ -L $target/etc/localtime ]; then
+    ln -sf /usr/share/zoneinfo/${TIMEZONE} $target/etc/localtime
 else
-    ainsl -vs /etc/hosts "127.0.0.1 $HOSTNAME"
+    cp -f /usr/share/zoneinfo/${TIMEZONE} $target/etc/localtime
 fi
 
+if [ -n "$IPADDR" ]; then
+    ifclass DHCPC || ainsl -s /etc/hosts "$IPADDR $HOSTNAME.$DOMAIN $HOSTNAME"
+else
+    ifclass DHCPC && ainsl -s /etc/hosts "127.0.0.1 $HOSTNAME"
+fi
+
+if [ -f $target/etc/hosts.orig ]; then
+    mv $target/etc/hosts.orig $target/etc/hosts
+fi
 fcopy -iM /etc/hosts /etc/motd
 
 # make /root accessible only by root

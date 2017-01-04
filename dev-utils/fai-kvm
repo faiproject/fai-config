@@ -2,20 +2,32 @@
 
 # fai-kvm, start kvm host for testing FAI software
 #
-# Author:    Thomas Lange, Uni Koeln, 2011-2012
+# Author:    Thomas Lange, Uni Koeln, 2011-2015
 # License:   GPL v2 or any later version
 
-fix="-vga std -k en-us"  # if loading cirrusfb (via pcimodules and modprobe cirrusfb) causes errors in kvm
+fix="-k en-us -cpu host -global isa-fdc.driveA= "  # if loading cirrusfb (via pcimodules and modprobe cirrusfb) causes errors in kvm
 # without it centos initrd is not created properly and results in kernel panic
 
+# for booting form CD first, then hard disk: -boot order=dc 
 
+vga="-vga std"
 user=1
-size=5   # default size of the disk image
+size=10   # default size of the disk image
 ram=2000
 disks=1
 cdimage=/files/scratch/fai-cd.iso # default name for CD image
 diskdir=/tmp     # directory where the disk images will be created, a RAM disk is recommended
+usernet=0
+newdisk=0
+macprefix=52:54:00:11:23
+# - - - - - - - - - - - - - - - - - - - - - - - - -
+boot_disk() {
 
+  # boot from disk
+    [ -n "$1" ] && disk=$1
+    set -x
+    kvm $gopt -boot order=c $net $disk
+}
 # - - - - - - - - - - - - - - - - - - - - - - - - -
 boot_pxe() {
 
@@ -29,7 +41,7 @@ boot_cd() {
   [ -n "$1" ] && cdimage=$1
   # boot fai-cd
   set -x
-  kvm $gopt $net $disk -cdrom $cdimage
+  kvm $gopt -boot order=dc $net $disk -cdrom $cdimage
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - -
 die() {
@@ -42,33 +54,53 @@ usage() {
 
   cat <<EOF
 
- fai-kvm [options] pxe   # start a host booting with PXE from NIC
- fai-kvm [options] cd [imagename] # start a host booting from a ISO image
+ fai-kvm [options] pxe   # start a host booting using PXE from NIC
+ fai-kvm [options] disk [imagename]  # start a host booting from first disk
+ fai-kvm [options] cd   [imagename]  # start a host booting from a ISO image
 
  -n          create a new empty disk image, which is used as a local disk
- -s <size>   size of the local disk (GB, defaults to 5GB)
- -d <num>    number of local disks (default is one)
- -m <mem>    RAM size (MB, defaults to 2000MB)
- -u <num>    number of the user (so multiple users can call this script)
-
+ -N          recreate a new empty disk image, even if one already exists
+ -s <size>   size of the local disk in GB (default is ${size}GB)
+ -d <num>    number of local disks (default is 1)
+ -D <path>   directory, where the disk image files are created (default: $diskdir)
+ -m <mem>    RAM size  inMB (defaults is ${ram}MB)
+ -u <num>    user number. This will become part of the MAC address of the interface
+             of the VM and is the number of the tap device number. It is also used
+             for the file name of the disk files. Each VM must have a unique number.
+             If you have created 9 tap devies you can use the numbers 1 to 9.
+ -V          do not use vga std with Bochs extensions, use the kvm default
+ -U          Use kvm user networking instead of tap devices
+ -t          Set title of the Qemu windows
 EOF
   exit 0
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - -
 
-while getopts "hnu:s:m:d:" opt ; do
+while getopts "UhnNu:s:m:d:VD:t:" opt ; do
     case "$opt" in
         n) newdisk=1    ;;
+        N) newdisk=2    ;;
+        U) usernet=1 ;;
         u) user=$OPTARG ;;
         m) ram=$OPTARG ;;
         s) size=$OPTARG ;;
         d) disks=$OPTARG ;;
+        D) diskdir=$OPTARG ;;
+        t) title=$OPTARG ;;
         h) usage;;
+        V) vga="";;
         ?) die 1 "Unknown option";;
     esac
 done
 shift $(($OPTIND - 1))
 
+if [ -z "$1" ]; then
+    echo Missing argument. pxe, cd or disk
+    usage
+    exit 1
+fi
+
+: ${title:=FAI-kvm-$user}
 hex=$(echo $user 16o p | dc)
 diskfile=$diskdir/faitest-disk-$user
 
@@ -79,9 +111,15 @@ diskfile=$diskdir/faitest-disk-$user
 # xA:xx:xx:xx:xx:xx
 # xE:xx:xx:xx:xx:xx
 
-mac=52:54:00:11:23:$hex
+mac=$macprefix:$hex
 
-net="-net nic,macaddr=$mac,model=virtio -net tap,ifname=tap$user,script=no,downscript=no"
+if [ $usernet = 1 ]; then
+    net=""
+else
+    net="-net nic,macaddr=$mac,model=virtio -net tap,ifname=tap$user,script=no,downscript=no"
+fi
+
+
 disk=""
 for i in `seq 1 $disks` ; do
   disk="$disk -drive file=$diskfile-$i.qcow2,if=virtio,index=$i"
@@ -89,19 +127,25 @@ for i in `seq 1 $disks` ; do
     disk="$disk"
   fi
 done
-gopt="$fix -m $ram -smp 2 -name FAI-test"
+gopt="$fix $vga -m $ram -smp 2 -name $title"
 
-# create new disk image
-if [ X$newdisk = X1 ]; then
+
+# create new disk images
+if [ X$newdisk != X0 ]; then
   for i in `seq 1 $disks` ; do
-    rm -f $diskfile-$i.qcow2
-    qemu-img create -f qcow2 -o preallocation=metadata $diskfile-$i.qcow2 ${size}G
+      if [ X$newdisk = X1 -a -f $diskfile-$i.qcow2 ]; then
+	  echo "Will not overwrite disk image. Please use -N."
+	  exit 3
+      fi
+      rm -f $diskfile-$i.qcow2
+      qemu-img create -f qcow2 -o preallocation=metadata $diskfile-$i.qcow2 ${size}G
   done
 fi
 
 case "$1" in
     pxe) boot_pxe ;;
     cd) boot_cd $2 ;;
+    disk) boot_disk $2 ;;
     *)
         echo "Missing argument." >&2
         usage

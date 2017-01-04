@@ -1,7 +1,7 @@
 .\"                                      Hey, EMACS: -*- nroff -*-
 .if \n(zZ=1 .ig zZ
 .if \n(zY=1 .ig zY
-.TH fai-make-nfsroot 8 "12 February 2012" "FAI 4"
+.TH fai-make-nfsroot 8 "April 2015" "FAI 5"
 .de }1
 .ds ]X \&\\*(]B\\
 .nr )E 0
@@ -68,20 +68,18 @@ purge ~nlinux-image inside the nfsroot.
 Install additional packages defined in /etc/fai/NFSROOT into the
 nfsroot. Also copies all kernels from the nfsroot to the directory $TFTPROOT.
 .TP
-.B \-l
-Create a nfsroot using live/filesystem.dir subdirectory. This is
-needed if the initrd of the kernel is created by the live-boot
-package.
-.TP
 .B \-p
-Preserve ssh keys. This will preserve the whole .ssh directory of the
-root account inside the nfsroot.
+Preserve ssh configs including the keys of the root account. This will
+not preserve the ssh host keys inside the nfsroot.
 .TP
 .B \-v
 Create verbose output on stdout.
 .TP
 .BI \-h
 Show simple help.
+.TP
+.B \-z
+Use gzip for compressing the base.tar file. Default is to use xz.
 
 .SH NOTES
 .PD 0
@@ -116,6 +114,10 @@ Copy this file to the NFSROOT.
 .TP
 .FN /etc/fai/apt/keys/*.asc
 Repository keys in .asc format found here will be installed into the NFSROOT.
+.PD 0
+.TP
+.FN /var/log/fai/variables
+The script will write the values of FAI_VERSION and NFSROOT to this file.
 
 .SH AUTHOR
 Thomas Lange <lange@informatik.uni-koeln.de>

@@ -123,6 +123,7 @@ $ENV{flag_initial} and $FAI::reinstall = 0;
 #
 ################################################################################
 %FAI::current_lvm_config = ();
+$FAI::uses_lvm = 0;
 
 ################################################################################
 #
@@ -130,6 +131,7 @@ $ENV{flag_initial} and $FAI::reinstall = 0;
 #
 ################################################################################
 %FAI::current_raid_config = ();
+$FAI::uses_raid = 0;
 
 ################################################################################
 #
@@ -187,22 +189,6 @@ sub numsort { return sort { $a <=> $b } @_; }
 
 ################################################################################
 #
-# @brief Test whether device is a loopback device and, if so, extract the
-# numeric device id
-#
-# @param $dev Device name of disk
-#
-# @return 1, iff it is a loopback device, and device id as second item
-#
-################################################################################
-sub loopback_dev {
-  my ($dev) = @_;
-  return (1, $1) if ($dev =~ m{^/dev/loop(\d+)$});
-  return (0, -1);
-}
-
-################################################################################
-#
 # @brief Check, whether $dev is a physical device, and extract sub-parts
 #
 # @param $dev Device string
@@ -213,21 +199,16 @@ sub loopback_dev {
 ################################################################################
 sub phys_dev {
   my ($dev) = @_;
-  if ($dev =~ m{^/dev/(i2o/hd[a-z]|sd[a-z]{1,2}|hd[a-z]|vd[a-z]|xvd[a-z])(\d+)?$})
+  if ($dev =~ m{^/dev/(i2o/hd[a-z]|sd[a-z]{1,2}|hd[a-z]|vd[a-z]|xvd[a-z]|fio[a-z])(\d+)?$})
   {
     defined($2) or return (1, "/dev/$1", -1);
     return (1, "/dev/$1", $2);
   }
   elsif ($dev =~
-    m{^/dev/(cciss/c\d+d\d+|ida/c\d+d\d+|rd/c\d+d\d+|ataraid/d\d+|etherd/e\d+\.\d+)(p(\d+))?$})
+    m{^/dev/(loop\d+|cciss/c\d+d\d+|ida/c\d+d\d+|md\d{3,}|md/\w+\d*|rd/c\d+d\d+|ataraid/d\d+|etherd/e\d+\.\d+|nvme\d+n1)(p(\d+))?$})
   {
     defined($2) or return (1, "/dev/$1", -1);
     return (1, "/dev/$1", $3);
-  }
-  elsif ((&FAI::loopback_dev($dev))[0])
-  {
-    # we can't tell whether this is a disk of its own or a partition
-    return (1, $dev, -1);
   }
   return (0, "", -2);
 }
@@ -306,12 +287,7 @@ sub mark_encrypted {
 sub make_device_name {
   my ($dev, $p) = @_;
   $dev .= "p" if ($dev =~
-    m{^/dev/(cciss/c\d+d\d+|ida/c\d+d\d+|rd/c\d+d\d+|ataraid/d\d+|etherd/e\d+\.\d+)$});
-  if ((&FAI::loopback_dev($dev))[0])
-  {
-    $p += (&FAI::loopback_dev($dev))[1];
-    $dev = "/dev/loop"
-  }
+    m{^/dev/(loop\d+|cciss/c\d+d\d+|ida/c\d+d\d+|md\d{3,}|md/\w+\d*|rd/c\d+d\d+|ataraid/d\d+|etherd/e\d+\.\d+|nvme\d+n1)$});
   $dev .= $p;
   internal_error("Invalid device $dev") unless (&FAI::phys_dev($dev))[0];
   return $dev;

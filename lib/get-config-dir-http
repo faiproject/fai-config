@@ -5,7 +5,7 @@
 # get-config-dir-http -- get a tarball of the config dir
 #
 # This script is part of FAI (Fully Automatic Installation)
-# Copyright (C) 2000-2010 Thomas Lange, lange@informatik.uni-koeln.de
+# Copyright (C) 2000-2015 Thomas Lange, lange@informatik.uni-koeln.de
 # Universitaet zu Koeln
 #
 #*********************************************************************
@@ -24,29 +24,23 @@
 
 fdir=/var/lib/fai
 
+mkramdisk $fdir
 cd $fdir
 
 # determine basename of tar file to download (later used as class name)
 file=${FAI_CONFIG_SRC##*/}
 base=${file%%.*}
 
-# get md5sum first
-if wget -q -t5 -O $fdir/$file.md5 ${FAI_CONFIG_SRC}.md5; then
-   echo "Checksum file $file.md5 successfully downloaded."
-else
-   echo "Checksum file ${FAI_CONFIG_SRC}.md5 failed to download. Aborting." >&2
-   task_error 881
-fi
-
 # now download tarball of config space
 echo -n "Getting configuration space tarball from $FAI_CONFIG_SRC ..."
-wget -q -t 3 $FAI_CONFIG_SRC && echo "done"
-task_error 882 $?
-
-# check the md5 sum
-echo -n "MD5 checksum of "
-md5sum -c $file.md5 || echo "checksum mismatch. ERROR." >&2
-task_error 883 $?
+HOME=/root curl -f -O --retry 3 $FAI_CONFIG_SRC
+ret=$?
+if [ $? -eq 0 ]; then
+    echo "done"
+else
+    echo "curl error $ret while downloading $FAI_CONFIG_SRC."
+    task_error 882 $ret
+fi
 
 # extraxt the downloaded file using ftar. Therefore define a class
 # with the basename of the file

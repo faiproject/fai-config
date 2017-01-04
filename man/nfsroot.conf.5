@@ -1,5 +1,5 @@
 .\"                                      Hey, EMACS: -*- nroff -*-
-.TH nfsroot.conf 5 "January 2014" "FAI 4.0"
+.TH nfsroot.conf 5 "January 2014" "FAI 5.0"
 .\" Please adjust this date whenever revising the manpage.
 
 .SH NAME
@@ -18,10 +18,10 @@ used inside the nfsroot. Use bash(1) syntax for defining variables.
 .TP
 .B FAI_DEBOOTSTRAP
 Two parameters for debootstrap(8), space separated. Debootstrap is
-called as the first part of fai-make-nfsroot. This variable defines
+called as the first part of fai-make-nfsroot unless -B is used. This variable defines
 SUITE and MIRROR for debootstrap. Example:
 
-FAI_DEBOOTSTRAP="wheezy http://http.debian.net/debian"
+FAI_DEBOOTSTRAP="wheezy http://httpredir.debian.org/debian"
 
 .TP
 .B NFSROOT_ETC_HOSTS
@@ -32,7 +32,7 @@ NFSROOT_ETC_HOSTS="192.168.33.250 faiserver"
 
 .TP
 .B FAI_ROOTPW
-The encrypted (with md5 or crypt) root password on all install
+The encrypted root password on all install
 clients during the installation process. Used when log in via ssh.
 This is not the password for the new installed system. Example:
 
@@ -75,9 +75,10 @@ Options that will be passed to debootstrap(8). Used for excluding
 packages and for specifying a different architecture.
 
 .SH NOTES
-Normally, the nfsroot is mounted by the install kernel via NFS.
-It's also used on the FAI CD. You can convert an nfsroot to a
-compressed image using fai-nfsroot2image(8).
+Normally, the nfsroot is mounted by the install kernel via NFS.  It's
+also used on the FAI CD. FAI clients can also receive the nfsroot via
+http. There you have to create a compressed squashfs image of the
+nfsroot with fai-cd(8).
 
 .SH SEE ALSO
 
@@ -86,7 +87,6 @@ compressed image using fai-nfsroot2image(8).
 .BR fai (8)
 .BR fai\-mirror(1)
 .BR fai\-chboot(8)
-.BR fai\-nfsroot2image(8)
 
 .br
 This file is part of FAI (Fully Automatic Installation). The FAI
