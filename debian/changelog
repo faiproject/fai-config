@@ -1,3 +1,9 @@
+fai (5.3.3~bpo8+2) jessie-backports; urgency=medium
+
+  * rebuild, so tar.xz does not include .git directory
+
+ -- Thomas Lange <lange@debian.org>  Mon, 09 Jan 2017 19:34:40 +0100
+
 fai (5.3.3~bpo8+1) jessie-backports; urgency=low
 
   * setup-storage: do execute raid/lvm parts only if needed
