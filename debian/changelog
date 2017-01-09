@@ -1,4 +1,4 @@
-fai (5.3.3~beta2) unstable; urgency=low
+fai (5.3.3~bpo8+1) jessie-backports; urgency=low
 
   * setup-storage: do execute raid/lvm parts only if needed
     Closes: #845428
@@ -6,7 +6,7 @@ fai (5.3.3~beta2) unstable; urgency=low
   * fai-cd: add -p to grub-mkimage call
   * disk_config/CLOUD: fix option name
 
- -- Thomas Lange <lange@debian.org>  Wed, 04 Jan 2017 17:26:49 +0100
+ -- Thomas Lange <lange@debian.org>  Mon, 09 Jan 2017 16:44:13 +0100
 
 fai (5.3.2) unstable; urgency=low
 
