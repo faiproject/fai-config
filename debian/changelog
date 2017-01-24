@@ -1,3 +1,12 @@
+fai (5.3.4~bpo8+1) jessie-backports; urgency=low
+
+  * 30-interface: use new nic names also for the fixed IP setup, use CIDR
+    instead of ip address, netmask, broadcast
+  * get-boot-info: set CIDR
+  * fai-diskimage: remove test if LVM is used on the host
+
+ -- Thomas Lange <lange@debian.org>  Tue, 24 Jan 2017 13:13:03 +0000
+
 fai (5.3.3~bpo8+2) jessie-backports; urgency=medium
 
   * rebuild, so tar.xz does not include .git directory
