@@ -1,4 +1,3 @@
-
 #! /bin/bash
 
 # parse *.profile and build a curses menu, so the user can select a profile
@@ -9,7 +8,7 @@
 if [ X$FAI_ACTION = Xinstall -o X$FAI_ACTION = Xdirinstall -o X$FAI_ACTION = X ]; then
     :
 else
-    return
+    return 0
 fi
 
 [ "$flag_menu" ] || return 0
