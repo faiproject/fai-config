@@ -1,3 +1,9 @@
+fai (5.4~bpo9+1) stretch-backports; urgency=low
+
+  * make backports version
+
+ -- Thomas Lange <lange@debian.org>  Sun, 08 Oct 2017 13:38:18 +0200
+
 fai (5.4) unstable; urgency=low
 
   [ Thomas Lange ]
