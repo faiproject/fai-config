@@ -159,6 +159,13 @@ Warning: apt-key output should not be parsed
 WARNING: Failed to connect to lvmetad. Falling back to device scanning
 Warning: The home dir /var/lib/usbmux you specified
 diff: /var/lib/apparmor/profiles/.apparmor.md5sums: No such file or directory
+error reporting disabled
+Enabling Firmware First mode for corrected errors
+errors: 0
+ 0 errors
+Memory Error Correction:
+Memory Controller 0 - Channel . Error
+IIO RAS/Control Status/Global Errors
 update-rc.d: warning: start and stop actions are no longer supported"
 
 # add pattern on some conditions
