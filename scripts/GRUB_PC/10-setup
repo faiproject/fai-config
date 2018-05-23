@@ -27,6 +27,11 @@ fi
 
 GROOT=$($ROOTCMD grub-probe -tdrive -d $BOOT_DEVICE)
 
+# handle /boot in lvm-on-md
+_bdev=$(readlink -f $BOOT_DEVICE)
+if [ "${_bdev%%-*}" = "/dev/dm" ]; then
+  BOOT_DEVICE=$( lvs --noheadings -o devices $BOOT_DEVICE | sed -e 's/^*\([^(]*\)(.*$/\1/' )
+fi
 
 # Check if RAID is used for the boot device
 if [[ $BOOT_DEVICE =~ '/dev/md' ]]; then
