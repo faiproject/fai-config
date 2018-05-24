@@ -1,0 +1,7 @@
+#! /bin/bash
+
+# disable the first login screen
+$ROOTCMD dpkg-divert --local --rename --add /etc/xdg/autostart/gnome-initial-setup-first-login.desktop
+$ROOTCMD dpkg-divert --local --rename --add /etc/xdg/autostart/gnome-initial-setup-copy-worker.desktop
+$ROOTCMD deluser --system gnome-initial-setup
+$ROOTCMD dpkg-reconfigure keyboard-configuration
