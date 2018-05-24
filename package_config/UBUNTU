@@ -16,3 +16,6 @@ PACKAGES install XORG
 ubuntu-desktop
 ubuntu-standard
 ubuntu-minimal
+
+PACKAGES install GERMAN
+language-pack-gnome-de
