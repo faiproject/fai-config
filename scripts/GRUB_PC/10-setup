@@ -41,13 +41,6 @@ if [[ $BOOT_DEVICE =~ '/dev/md' ]]; then
 	echo Install grub on /dev/$device
 	$ROOTCMD grub-install --no-floppy "/dev/$device"
     done
-
-elif [[ $GROOT =~ 'hostdisk' ]]; then
-    $ROOTCMD grub-install --no-floppy --modules=part_msdos $BOOT_DEVICE
-    if [ $? -eq 0 ]; then
-        echo "Grub installed on hostdisk $BOOT_DEVICE"
-    fi
-
 else
     $ROOTCMD grub-install --no-floppy "$GROOT"
     if [ $? -eq 0 ]; then
