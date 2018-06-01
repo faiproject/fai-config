@@ -19,11 +19,13 @@ case $HOSTNAME in
         echo "FAIBASE CENTOS"   # you may want to add class XORG here
         ifclass I386 && echo CENTOS6_32  # AFAIK there's no 32bit C7
         ifclass AMD64 && echo CENTOS7_64
+	;;
     slchost)
         # Scientific Linux Cern, is very similar to CentOS. SLC should alsways use the class CENTOS
         echo "FAIBASE CENTOS SLC"  # you may want to add class XORG here
         ifclass I386 && echo SLC7_32
         ifclass AMD64 && echo SLC7_64
+	;;
     *)
         echo "FAIBASE DEBIAN DEMO" ;;
 esac
