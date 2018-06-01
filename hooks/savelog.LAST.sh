@@ -55,6 +55,7 @@ kolabadmin
 gstreamer.\+-plugins-really-bad
 liberrors.so
 liberrors-samba
+libsamba-errors
 gsambad
 libad
 libtest-nowarnings-perl
