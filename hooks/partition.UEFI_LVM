@@ -1,0 +1,3 @@
+#!/bin/bash
+mkramdisk /var/lib/fai/config/
+sed -i -e "s/%%HOSTNAME%%/${HOSTNAME/-/_}/g" /var/lib/fai/config/disk_config/*
