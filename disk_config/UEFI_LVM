@@ -1,0 +1,17 @@
+disk_config disk1 disklabel:gpt fstabkey:label bootable:2 always_format:all align-at:1MiB
+
+primary - 5MiB - -
+primary /boot/efi 512MiB vfat rw
+primary /boot 1GiB ext4 rw
+primary - 0- - -
+
+disk_config lvm always_format:all 
+vg vg_00  disk1.4
+vg_00-root / 10GiB ext4 rw,noatime,errors=remount-ro createopts="-L rootfs"
+vg_00-var /var 10GiB ext4 rw,noatime createopts="-L var"
+vg_00-varlog /var/log 10GiB ext4 rw,noatime createopts="-L var_log"
+vg_00-tmp /tmp 10GiB ext4 rw,noatime createopts="-L tmp"
+vg_00-swap swap RAM:150% swap rw
+
+disk_config end
+
