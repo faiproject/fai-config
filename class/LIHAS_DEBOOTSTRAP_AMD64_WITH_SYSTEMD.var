@@ -1,0 +1,1 @@
+FAI_DEBOOTSTRAP_OPTS="--arch amd64 --exclude=nano --no-check-gpg --include=vim,etckeeper,less,nullmailer,bash-completion,bash-builtins,strace,lsof,debconf-utils,heirloom-mailx,bind9-host,busybox,aptitude,python,gawk --components=main,contrib,non-free"
