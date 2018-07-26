@@ -12,9 +12,7 @@ memtest86+
 PACKAGES install GRUB_PC
 grub-pc
 
-PACKAGES install XORG
-ubuntu-desktop
-ubuntu-standard
+PACKAGES install
 ubuntu-minimal
 
 PACKAGES install GERMAN
