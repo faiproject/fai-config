@@ -167,6 +167,7 @@ errors: 0
 Memory Error Correction:
 Memory Controller 0 - Channel . Error
 IIO RAS/Control Status/Global Errors
+__stack_chk_fail
 update-rc.d: warning: start and stop actions are no longer supported"
 
 # add pattern on some conditions
