@@ -1,0 +1,16 @@
+PACKAGES install-norec DEBIAN
+fai-client
+debconf-utils
+file
+less
+linuxlogo
+rdate
+rsync
+openssh-client openssh-server
+time
+procinfo
+nullmailer
+eject
+locales
+console-setup kbd
+pciutils usbutils
