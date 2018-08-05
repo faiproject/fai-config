@@ -33,6 +33,6 @@ ainsl /etc/fstab "tmpfs     /tmp tmpfs     nodev,nosuid,size=50%,mode=1777   0  
 chmod -c 1777 ${target}/tmp
 chown -c 0:0  ${target}/tmp
 
-focpy /etc/cron.d/fai
+fcopy /etc/cron.d/fai
 
 exit $error
