@@ -31,8 +31,8 @@ newnicnames() {
 if [ -z "$NIC1" ]; then
     echo "ERROR: \$NIC1 is not defined. Cannot configure /etc/network/interfaces properly."
 fi
-newnicnames
 CIDR=$(ip -o -f inet addr show $NIC1 | awk '{print $4}')
+newnicnames
 if ifclass DHCPC && [ $FAI_ACTION = "install" -o $FAI_ACTION = "dirinstall" ]; then
 
     cat > $target/etc/network/interfaces <<-EOF
