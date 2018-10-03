@@ -9,13 +9,4 @@ fi
 uname -s | tr '[:lower:]' '[:upper:]'
 [ -x "`which dpkg`" ] && dpkg --print-architecture | tr a-z A-Z
 
-# determin if we are a DHCP client or not
-# count the : chars in the argument of ip=
-n="${ip//[^:]}"
-if [[ $ip =~ ^(on|any|dhcp)$ ]]; then
-    echo DHCPC
-elif [ ${#n} -lt 6 ]; then
-    echo DHCPC
-fi
-
 exit 0
