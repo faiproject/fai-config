@@ -29,7 +29,7 @@ newnicnames() {
 }
 
 if [ -z "$NIC1" ]; then
-    echo "ERROR: \$NIC1 is not defined. Cannot configure /etc/network/interfaces properly."
+    echo "WARNING: \$NIC1 is not defined. Cannot add ethernet to /etc/network/interfaces."
 fi
 CIDR=$(ip -o -f inet addr show $NIC1 | awk '{print $4}')
 newnicnames
