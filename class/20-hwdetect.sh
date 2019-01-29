@@ -12,8 +12,7 @@ echo 0 > /proc/sys/kernel/printk
 # here, you can load modules depending on the kernel version
 case $(uname -r) in
     2.6*) kernelmodules="$kernelmodules mptspi dm-mod md-mod aes dm-crypt" ;;
-      3*) kernelmodules="$kernelmodules mptspi dm-mod md-mod aes dm-crypt" ;;
-      4*) kernelmodules="$kernelmodules mptspi dm-mod md-mod aes dm-crypt" ;;
+    [3456]*) kernelmodules="$kernelmodules mptspi dm-mod md-mod aes dm-crypt" ;;
 esac
 
 for mod in $kernelmodules; do
