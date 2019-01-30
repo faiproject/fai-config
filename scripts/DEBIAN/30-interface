@@ -45,7 +45,7 @@ if ifclass DHCPC && [ $FAI_ACTION = "install" -o $FAI_ACTION = "dirinstall" ]; t
 	iface lo inet loopback
 
 EOF
-    if [ -n "$NIC1" ]; then
+    if [ -n "$NIC1" -a ! -f $target/etc/NetworkManager/NetworkManager.conf ]; then
 	cat >> $target/etc/network/interfaces <<-EOF
 	auto $NIC1
 	iface $NIC1 inet dhcp
