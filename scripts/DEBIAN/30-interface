@@ -90,9 +90,9 @@ case "$FAI_ACTION" in
     elif [ -d $target/etc/network/interfaces.d ]; then
         # ifupdown >= 0.7.41 (Debian >= 8, Ubuntu >= 14.04)
         iface_stanza lo loopback > $target/etc/network/interfaces.d/lo
-        if [ -n "$NIC1" ]; then
-            iface_stanza $NIC1 $METHOD > \
-                $target/etc/network/interfaces.d/$NIC1
+
+        if [ -n "$NIC1" -a ! -f $target/etc/NetworkManager/NetworkManager.conf ]; then
+            iface_stanza $NIC1 $METHOD > $target/etc/network/interfaces.d/$NIC1
         fi
     else
         (
