@@ -14,6 +14,7 @@ grub-pc
 
 PACKAGES install
 ubuntu-minimal
+ubuntu-server
 
 PACKAGES install GERMAN
 language-pack-gnome-de
