@@ -10,4 +10,4 @@ apt-cacher-ng
 nscd psmisc
 bind9 dnsutils
 iptables-persistent
-emacs25-nox
+zile
