@@ -7,5 +7,6 @@ xterm
 desktop-base
 
 PACKAGES install UBUNTU
+ubuntu-server-
 ubuntu-standard
 ubuntu-desktop
