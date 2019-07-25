@@ -47,12 +47,20 @@ if [[ $BOOT_DEVICE =~ '/dev/md' ]]; then
     # install grub on all members of RAID
     for device in `LC_ALL=C perl -ne 'if(/^'$raiddev'\s.+raid\d+\s(.+)/){ $_=$1; s/\d+\[\d+\]//g; print }' /proc/mdstat`; do
 	echo Install grub on /dev/$device
-	$ROOTCMD grub-install --no-floppy --force-extra-removable "/dev/$device"
+	if ifclass DEBIAN; then
+	    $ROOTCMD grub-install --no-floppy --force-extra-removable "/dev/$device"
+	else
+	    $ROOTCMD grub-install --no-floppy "/dev/$device"
+	fi
     done
 
 elif [[ $BOOT_DEVICE =~ '/dev/loop' ]]; then
     # do not update vmram when using a loop device
-    $ROOTCMD grub-install --no-floppy --force-extra-removable --modules=part_gpt --no-nvram $BOOT_DEVICE
+    if ifclass DEBIAN; then
+        $ROOTCMD grub-install --no-floppy --force-extra-removable --modules=part_gpt --no-nvram $BOOT_DEVICE
+    else
+        $ROOTCMD grub-install --no-floppy --modules=part_gpt --no-nvram $BOOT_DEVICE
+    fi
     if [ $? -eq 0 ]; then
         echo "Grub installed on hostdisk $BOOT_DEVICE"
     fi
