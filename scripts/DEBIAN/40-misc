@@ -42,8 +42,9 @@ ln -fs /proc/mounts $target/etc/mtab
 rm -f $target/etc/dpkg/dpkg.cfg.d/fai $target/etc/dpkg/dpkg.cfg.d/unsafe-io
 
 if [ -d /etc/fai ]; then
-    ainsl -a /etc/fai/fai.conf "FAI_CONFIG_SRC=$FAI_CONFIG_SRC"
-    fcopy -Miv /etc/fai/fai.conf
+    if ! fcopy -Mv /etc/fai/fai.conf; then
+	ainsl -a /etc/fai/fai.conf "FAI_CONFIG_SRC=$FAI_CONFIG_SRC"
+    fi
 fi
 fcopy -iv /etc/rc.local
 
