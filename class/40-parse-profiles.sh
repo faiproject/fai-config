@@ -5,7 +5,9 @@
 # (c) 2015 by Thomas Lange, lange@informatik.uni-koeln.de
 # Universitaet zu Koeln
 
-if [ X$FAI_ACTION = Xinstall -o X$FAI_ACTION = Xdirinstall -o X$FAI_ACTION = X ]; then
+if [ "X$FAI_ACTION" = "Xinstall" ] ||
+    [ "X$FAI_ACTION" = "Xdirinstall" ] ||
+    [ "X$FAI_ACTION" = "X" ]; then
     :
 else
     return 0
@@ -14,8 +16,8 @@ fi
 [ "$flag_menu" ] || return 0
 
 out=$(tty)
-tempfile=`(tempfile) 2>/dev/null`
-tempfile2=`(tempfile) 2>/dev/null`
+tempfile=$( (mktemp) 2>/dev/null )
+tempfile2=$( (mktemp) 2>/dev/null )
 trap "rm -f $tempfile $tempfile2" EXIT INT QUIT
 
 # declare the data structure, use associative arrays
@@ -53,7 +55,7 @@ parse_profile() {
 	    classes=
 	    lflag=0
             name=${line##Name: }
-	    [ $debug ] && echo "XX NAME $name found"
+	    [ "$debug" ] && echo "XX NAME $name found"
 	    list+=("$name")  # add new item to list
 	    continue
 	fi
@@ -61,7 +63,7 @@ parse_profile() {
 	if [[ $line =~ "Description: " ]]; then
 	    lflag=0
             desc=${line##Description: }
-	    [ $debug ] && echo "XX $desc found"
+	    [ "$debug" ] && echo "XX $desc found"
 	    ardesc[$name]="$desc"
 	    continue
 	fi
@@ -69,7 +71,7 @@ parse_profile() {
 	if [[ $line =~ "Short: " ]]; then
 	    lflag=0
             short=${line##Short: }
-	    [ $debug ] && echo "XX $short found"
+	    [ "$debug" ] && echo "XX $short found"
 	    arshort[$name]="$short"
 	    continue
 	fi
@@ -77,7 +79,7 @@ parse_profile() {
 	if [[ $line =~ "Classes: " ]]; then
             lflag=0
             classes=${line##Classes: }
-	    [ $debug ] && echo "XX classes found"
+	    [ "$debug" ] && echo "XX classes found"
 	    arclasses[$name]="$classes"
 	    continue
 	fi
@@ -85,7 +87,7 @@ parse_profile() {
 	if [[ $line =~ "Long: " ]]; then
             lflag=1
             long=${line##Long: }
-	    [ $debug ] && echo "XX long found"
+	    [ "$debug" ] && echo "XX long found"
 
 	# else it's another long line
 	elif [ $lflag -eq 1 ]; then
@@ -98,7 +100,7 @@ parse_profile() {
 	    continue
 	fi
 
-    done < $1
+    done < "$1"
 
     if [ -n "$long" ]; then
 	arlong[$name]="$long"
@@ -109,7 +111,7 @@ parse_profile() {
 prtresult() {
 
     # set newclasses which is used by fai-class(1)
-    local res=$(<$tempfile)
+    local res=$(<"$tempfile")
     echo "$BASH_SOURCE defined new classes: ${arclasses[$res]}"
     newclasses="${arclasses[$res]}"
 }
@@ -119,7 +121,7 @@ prtresult() {
 _parsed=0
 shopt -s nullglob
 for _f in *.profile; do
-    parse_profile $_f
+    parse_profile "$_f"
     _parsed=1
 done
 unset _f
@@ -136,9 +138,9 @@ for i in "${list[@]}"; do
     par+=("$i")
     par+=("${ardesc[${i}]}")
     par+=("${arshort[${i}]}")
-    echo "Name: ${i}" >> $tempfile2
-    echo -e ${arlong[${i}]} >> $tempfile2
-    echo -e "Classes: " ${arclasses[${i}]} "\n" >> $tempfile2
+    echo "Name: ${i}" >> "$tempfile2"
+    echo -e "${arlong[${i}]}" >> "$tempfile2"
+    echo -e "Classes: ${arclasses[${i}]}\n" >> "$tempfile2"
 done
 unset i
 
@@ -147,7 +149,7 @@ while true; do
     dialog --clear --item-help --title "FAI - Fully Automatic Installation" --help-button \
 	--default-item "$default" \
 	--menu "\nSelect your FAI profile\n\nThe profile will define a list of classes,\nwhich are used by FAI.\n\n\n"\
-	15 70 0 "${par[@]}" 2> $tempfile  1> $out
+	15 70 0 "${par[@]}" 2> "$tempfile"  1> "$out"
 
     _retval=$?
     case $_retval in
@@ -158,7 +160,8 @@ while true; do
 	    echo "No profile selected."
 	    break ;;
 	2)
-	    dialog --title "Description of all profiles" --textbox $tempfile2 0 0 1> $out;;
+	    dialog --title "Description of all profiles" --textbox "$tempfile2" 0 0
+	    1> "$out";;
     esac
 
 done
