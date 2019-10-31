@@ -46,7 +46,7 @@ fi
 
 # Make sure everything is configured properly
 if ifclass DEBIAN ; then
-        $ROOTCMD apt-get -f install
+        $ROOTCMD apt-get -f install -y
 fi
 
 if [ $FAI_ACTION = "install" ]; then
