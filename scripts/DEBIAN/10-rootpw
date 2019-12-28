@@ -1,15 +1,23 @@
-#! /bin/bash
+#!/usr/bin/env bash
 
-error=0; trap 'error=$(($?>$error?$?:$error))' ERR # save maximum error code
+error=0; trap 'error=$(($?>$error?$?:$error))' ERR; # save maximum error code
 
 # set root password
 if [ -n "$ROOTPW" ]; then
-    $ROOTCMD usermod -p "$ROOTPW" root
+  $ROOTCMD usermod -p "$ROOTPW" root;
 else
-    $ROOTCMD usermod -L root
+  $ROOTCMD usermod -L root;
+  # shellcheck disable=SC2154
+  if test -n "$username"; then
     # enable sudo for user
-    ainsl /etc/sudoers "$username   ALL = ALL"
-fi
+    mkdir -p /etc/sudoers.d/;
+    ainsl -a /etc/sudoers.d/01-localuser "$username   ALL = ALL";
+  else
+    echo "$0: ERR: Sorry, no username specified. This setup is unusable without username to log in with.";
+    exit 128;
+  fi;
+fi;
 
-exit $error
+exit "$error";
 
+### EOF

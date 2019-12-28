@@ -14,6 +14,7 @@ locales
 console-setup kbd
 pciutils usbutils
 unattended-upgrades
+sudo
 
 PACKAGES install NONFREE
 # you may want these non-free kernel drivers
