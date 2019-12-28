@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+### (c) 2019 corbolais@gmail.com
+
 target="${target:?}";
 
 luksKeyfileDir="/etc/luks/";
@@ -58,7 +60,7 @@ if test -n "$CRYPT_DEV"; then
     addLuksPW;
   else
     echo "$0: ERR: Sorry, LUKS password missing but Full Disk Encryption configured. This setup will fail to boot without LUKS password set.";
-    exit 700;
+    exit 128;
   fi;
 fi;
 
