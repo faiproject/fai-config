@@ -1,0 +1,5 @@
+### LUKS1 FDE packages
+PACKAGES install-norec FDE
+lvm2
+cryptsetup cryptsetup-initramfs
+initramfs-tools

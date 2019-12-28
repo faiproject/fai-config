@@ -1,0 +1,28 @@
+### FDE
+
+export FAI_FLAGS="verbose debug menu sshd createvt initial";
+export HOSTNAME="DebianFDE";
+
+### FDE requirements:
+export LUKSPW="fai";
+### Grab first disk identifier
+export FAIDISK="$(/usr/lib/fai/fai-disk-info | sed 's/\s+.*//g')";
+### Needed to make GRUB2 boot off LUKS1 FDE device
+export BOOT_DISK="/dev/${FAIDISK}";
+### Set this to enable LUKS1 FDE
+export CRYPT_DEV="${BOOT_DISK}1";
+
+
+ROOTPW='$1$kBnWcO.E$djxB128U7dMkrltJHPf6d1'
+
+# errors in tasks greater than this value will cause the installation to stop
+STOP_ON_ERROR=700
+
+# set parameter for install_packages(8)
+MAXPACKAGES=800
+
+# a user account will be created
+username=demo
+USERPW='$1$kBnWcO.E$djxB128U7dMkrltJHPf6d1'
+
+### EOF

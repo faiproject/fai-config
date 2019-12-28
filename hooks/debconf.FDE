@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+
+target="${target:?}";
+
+luksKeyfileDir="/etc/luks/";
+luksContainer="crypt_dev_${CRYPT_DEV##/dev/}";
+luksTmpCont="${LOGDIR}/${luksContainer}";
+luksKeyfile="${luksKeyfileDir}/${luksContainer}.keyfile";
+confFilename="50_LUKS1-FDE";
+
+createCrypttab() {
+  cryptUuid="$(blkid -s UUID -o value "${CRYPT_DEV}")";
+  if test -n "$CRYPT_DEV" -a -n "$cryptUuid"; then
+    echo "${luksContainer} UUID=$cryptUuid ${luksKeyfile} luks,discard,loud,initramfs" > "${target}/etc/crypttab"
+  else
+    exit 1;
+  fi;
+}
+
+enableFDE () {
+  ainsl -a /etc/default/grub.d/${confFilename}.cfg "GRUB_CMDLINE_LINUX=\"cryptdevice=${CRYPT_DEV}:${luksContainer}\"";
+  ainsl -a /etc/default/grub.d/${confFilename}.cfg "GRUB_ENABLE_CRYPTODISK=y";
+
+  ainsl -a /etc/cryptsetup-initramfs/conf-hook "CRYPTSETUP=y"
+  ainsl -a /etc/cryptsetup-initramfs/conf-hook "KEYFILE_PATTERN=${luksKeyfileDir}/*.keyfile"
+
+  ainsl -a /etc/initramfs-tools/conf.d/${confFilename}.conf "UMASK=0077"
+
+  createCrypttab;
+
+  install -vd -m 700 "${target}/${luksKeyfileDir}/"
+  install -v  -m 400 "${luksTmpCont}" "${target}/${luksKeyfile}"
+}
+
+addLuksPW() {
+  ### Add automatically generated key from keyslot#1 to keyslot#2
+  cryptsetup luksAddKey --key-slot 2 "${CRYPT_DEV}" --key-file "${target}/${luksKeyfile}" "${target}/${luksKeyfile}";
+  ### Add password to keyslot#1
+  ### This reduces boot time as grub tries to match keys to all keyslots, starting 
+  ### at #0 (LUKS1) or #1 (LUKS2). As the grub implementation of PBKDF is not optimized 
+  ### nor possibly adapted to the target CPU.
+  ### Make grub find the password slot at first try.
+  cryptsetup luksRemoveKey --key-slot 1 "${CRYPT_DEV}" "${target}/${luksKeyfile}" || true;
+  echo "$LUKSPW" | cryptsetup luksAddKey --key-slot 1 "${CRYPT_DEV}" --key-file "${target}/${luksKeyfile}";
+
+  ### https://unix.stackexchange.com/questions/535077/convert-luks2-back-to-luks-version-1
+  ### In case a LUKS2 container was created, convert it back to LUKS1:
+  #echo "$LUKSPW" | cryptsetup luksConvertKey --pbkdf=pbkdf2 "${CRYPT_DEV}";
+  #echo "$LUKSPW" | cryptsetup convert --type luks1 "${CRYPT_DEV}";
+}
+
+if test -n "$CRYPT_DEV"; then
+  echo "$0: INFO: Enabling LUKS1 Full Disk Encryption with GRUB2.";
+  enableFDE;
+  ### If $LUKSPW is set then move key-file to next slot and install $LUKSPW before that.
+  if test -n "$LUKSPW"; then
+    echo "$0: INFO: Adding Password to LUKS1 key-slot.";
+    addLuksPW;
+  else
+    echo "$0: ERR: Sorry, LUKS password missing but Full Disk Encryption configured. This setup will fail to boot without LUKS password set.";
+    exit 700;
+  fi;
+fi;
+
+### EOF
