@@ -14,8 +14,13 @@ if $ROOTCMD which ufw 1>/dev/null 2>&1; then
   $ROOTCMD ufw allow from any to any port 68 proto udp;
 else
   ### No ufw installed, just call iptables for help, again.
-  ainsl -a "/etc/rc.local" "${FAI}/hooks/confdir.DEFAULT;";
-  chmod 700 "${target}/etc/rc.local";
+  if test -s "/etc/rc.local"; then
+    ainsl -a "/etc/rc.local" "${FAI}/hooks/confdir.DEFAULT;";
+  else
+    ainsl -a "/etc/rc.local" "#!/usr/bin/env bash";
+    ainsl -a "/etc/rc.local" "${FAI}/hooks/confdir.DEFAULT;";
+    chmod 700 "${target}/etc/rc.local";
+  fi;
   mkdir -p "${target}/${FAI}/hooks/";
   cp "${FAI}/hooks/confdir.DEFAULT" "${target}/${FAI}/hooks/confdir.DEFAULT";
 fi;
