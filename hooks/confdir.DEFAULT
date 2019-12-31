@@ -9,6 +9,7 @@ cat <<EOL | iptables-restore;
 -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
 -A INPUT -p tcp -m tcp --dport 22 -j ACCEPT
 -A INPUT -p udp -m udp --dport 68 -j ACCEPT
+-A INPUT -i lo -j ACCEPT
 COMMIT
 # Completed on Wed Dec 25 23:26:39 2019
 EOL
