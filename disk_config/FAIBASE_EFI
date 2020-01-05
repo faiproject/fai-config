@@ -1,0 +1,10 @@
+# example of new config file for setup-storage
+#
+# <type> <mountpoint> <size>   <fs type> <mount options> <misc options>
+
+disk_config disk1 disklabel:gpt bootable:1 fstabkey:uuid
+
+primary /boot/efi 512M  vfat  rw
+primary /      2G-50G   ext4  rw,noatime,errors=remount-ro
+primary swap   200-10G  swap  sw
+primary /home  100-     ext4  rw,noatime,nosuid,nodev createopts="-L home -m 1" tuneopts="-c 0 -i 0"
