@@ -176,6 +176,10 @@ Loading user firmware failed, using default values
 stunnel4 you specified can't be accessed: No such file or directory
 install-docs --verbose --check file_name' may give more details about the above errors
 cannot open '/etc/ssl/certs/java/cacerts' for reading: No such file or directory
+can't claim BAR
+disabling ASPM
+data block query control method not found
+Resource conflict.\+ found
 update-rc.d: warning: start and stop actions are no longer supported"
 
 # add pattern on some conditions
