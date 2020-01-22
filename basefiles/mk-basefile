@@ -130,7 +130,7 @@ cleanup-rinse() {
 
 tarit() {
 
-    tar $attributes --one-file-system -C $xtmp -cf - . | $zip > $target.$ext
+    tar $attributes --numeric-owner --one-file-system -C $xtmp -cf - . | $zip > $target.$ext
 }
 
 
@@ -225,7 +225,7 @@ usage() {
     cat <<EOF
 mk-basefile, create minimal base files for a Linux distritubtion
 
-   Copyright (C) 2011-2018 by Thomas Lange
+   Copyright (C) 2011-2020 by Thomas Lange
 
 Usage: mk-basefile [OPTION] ... DISTRIBUTION
 
