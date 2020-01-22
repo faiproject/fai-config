@@ -64,6 +64,7 @@ libclass-errorhandler-perl
 zope-ploneerrorreporting
 libroxen-errormessage
 liberror-perl
+perl-Error
 libgpg-error-dev
 libgpg-error0
 Opts:.\+errors=remount
