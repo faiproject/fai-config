@@ -25,13 +25,13 @@ You should have a fast network connection, because most packages are
 downloaded from the internet.
 Classes: INSTALL FAIBASE DEBIAN DEMO XORG GNOME
 
-Name: CentOS 7
-Description: CentOS 7 with Xfce desktop
-Short: A normal Xfce desktop, running CentOS 7
-Long: We use the Debian nfsroot for installing the CentOS 7 OS.
+Name: CentOS 8
+Description: CentOS 8 with Xfce desktop
+Short: A normal Xfce desktop, running CentOS 8
+Long: We use the Debian nfsroot for installing the CentOS 8 OS.
 You should have a fast network connection, because most packages are
 downloaded from the internet.
-Classes: INSTALL FAIBASE CENTOS CENTOS7_64 XORG
+Classes: INSTALL FAIBASE CENTOS CENTOS8_64 XORG
 
 Name: Ubuntu
 Description: Ubuntu 18.04 desktop installation
