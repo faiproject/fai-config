@@ -8,3 +8,23 @@ deb $ubuntumirror/ubuntu $ubuntudist main restricted universe multiverse
 deb $ubuntumirror/ubuntu $ubuntudist-updates main restricted universe multiverse
 deb $ubuntumirror/ubuntu $ubuntudist-security main restricted universe multiverse
 EOM
+
+
+# https://lists.uni-koeln.de/pipermail/linux-fai/2016-July/011398.html
+# In Ubuntu 16.04 (but not 14.04), the locales configuration mechanism has
+# changed.  There is a /var/lib/dpkg/info/locales.config file, which
+# overrides /var/lib/dpkg/info/locales.postinst and consults
+# /var/lib/locales/supported.d/local instead of the debconf system.  (See
+# the code in /usr/share/debconf/frontend that prefers locales.config.) This
+# hook applies the debconf setting.  It must run after FAI's debconf task
+# but before dpkg gets a chance to clobber debconf with an empty setting.
+
+if [ ! -f "$target/var/lib/locales/supported.d/local" ]; then
+    $ROOTCMD debconf --owner=locales sh -c '
+        . /usr/share/debconf/confmodule
+        db_version 2.0
+        db_get locales/locales_to_be_generated &&
+        mkdir -p /var/lib/locales/supported.d &&
+        echo "$RET" > /var/lib/locales/supported.d/local' &&
+    $ROOTCMD dpkg-reconfigure locales
+fi
