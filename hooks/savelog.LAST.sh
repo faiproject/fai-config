@@ -168,6 +168,7 @@ errors: 0
 Memory Error Correction:
 Memory Controller 0 - Channel . Error
 IIO RAS/Control Status/Global Errors
+RAS: Correctable Errors collector initialized
 __stack_chk_fail
 grub.cfg.new: Directory nonexistent
 can't derive routing for PCI INT A
@@ -180,6 +181,7 @@ cannot open '/etc/ssl/certs/java/cacerts' for reading: No such file or directory
 can't claim BAR
 disabling ASPM
 data block query control method not found
+subprocess.py.\+RuntimeWarning: line buffering
 Resource conflict.\+ found
 update-rc.d: warning: start and stop actions are no longer supported"
 
