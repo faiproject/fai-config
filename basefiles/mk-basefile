@@ -2,7 +2,7 @@
 
 # mk-basefile, create basefiles for some distributions
 #
-# Thomas Lange, Uni Koeln, 2011-2018
+# Thomas Lange, Uni Koeln, 2011-2020
 # based on the Makefile implementation of Michael Goetze
 #
 # Usage example: mk-basefile -J STRETCH64
@@ -29,6 +29,7 @@ EXCLUDE_WHEEZY=info
 EXCLUDE_JESSIE=info
 EXCLUDE_STRETCH=info
 EXCLUDE_BUSTER=
+EXCLUDE_BULLSEYE=
 EXCLUDE_SID=
 
 EXCLUDE_TRUSTY=dhcp3-client,dhcp3-common,info
@@ -218,6 +219,7 @@ prtdists() {
     JESSIE32     JESSIE64
     STRETCH32    STRETCH64
     BUSTER32     BUSTER64
+    BULLSEYE32   BULLSEYE64
     SID32        SID64
 "
 }
@@ -294,7 +296,7 @@ case "$target" in
     SLC7_64) slc amd64 7 ;;
     TRUSTY*|XENIAL*|BIONIC*|FOCAL*)
         debgeneric $target $MIRROR_UBUNTU ;;
-    SQUEEZE*|WHEEZY*|JESSIE*|STRETCH*|BUSTER*|SID*)
+    SQUEEZE*|WHEEZY*|JESSIE*|STRETCH*|BUSTER*|BULLSEYE*|SID*)
         debgeneric $target $MIRROR_DEBIAN $ARCH;;
     *) echo "Unknown distribution. Aborting."
        prtdists
