@@ -34,12 +34,12 @@ downloaded from the internet.
 Classes: INSTALL FAIBASE CENTOS CENTOS8_64 XORG
 
 Name: Ubuntu
-Description: Ubuntu 18.04 desktop installation
+Description: Ubuntu 20.04 desktop installation
 Short: Unity desktop
 Long: We use the Debian nfsroot for installing the Ubuntu OS.
 You should have a fast network connection, because most packages are
 downloaded from the internet.
-Classes: INSTALL FAIBASE DEMO DEBIAN UBUNTU BIONIC BIONIC64 XORG
+Classes: INSTALL FAIBASE DEMO DEBIAN UBUNTU FOCAL FOCAL64 XORG
 
 Name: Inventory
 Description: Show hardware info
