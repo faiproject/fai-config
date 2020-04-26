@@ -49,6 +49,7 @@ iface_stanza() {
 newnicnames() {
 
     # determine predictable network names only for stretch and above
+    local name
 
     [ $do_init_tasks -eq 0 ] && return
     [ -z "$NIC1" ] && return
@@ -63,10 +64,16 @@ newnicnames() {
 	name=$(udevadm info /sys/class/net/$NIC1 | sed -rn "s/^E: $field=(.+)/\1/p")
 	if [[ $name ]]; then
 	    NIC1=$name
-	    break
+	    return
 	fi
     done
-    if [[ ! $name ]]; then
+
+    # try to get altname net dev
+    name=$(ip link show $NIC1 | awk '/altname / { print $2 }')
+    if [[ $name ]]; then
+	NIC1=$name
+	return
+    else
 	echo "$0: error: could not find systemd predictable network name. Using $NIC1."
     fi
 }
