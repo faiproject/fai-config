@@ -24,9 +24,9 @@ if [ -d $target/boot/grub2 -a ! -f $target/boot/grub2/device.map ]; then
     done
 fi
 
-bootdev=`device2grub $BOOT_DEVICE`
-bootpart=`device2grub $BOOT_PARTITION`
-version=`$ROOTCMD rpm -qv kernel | cut -d- -f2-`
+bootdev=$(device2grub $BOOT_DEVICE)
+bootpart=$(device2grub $BOOT_PARTITION)
+version=$($ROOTCMD rpm -qv kernel | cut -d- -f2-)
 
 if grep '[[:space:]]/boot[[:space:]]' $LOGDIR/fstab; then
 	bootdir=''
@@ -69,7 +69,7 @@ else
     # CentOS 5
     iname=initrd
 fi
-title=`head -1 $target/etc/redhat-release`
+title=$(head -1 $target/etc/redhat-release)
 
 cat > $target/boot/grub/grub.conf <<-EOF
 	timeout 5
