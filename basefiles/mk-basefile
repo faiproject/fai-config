@@ -269,7 +269,7 @@ while getopts ashzJd:kf: opt ; do
         ?) exit 3 ;; # error in option parsing
     esac
 done
-shift $(($OPTIND - 1))
+shift $((OPTIND - 1))
 
 xtmp=$(mktemp --tmpdir -d basefiles.XXXXXXXX)
 if [ $? -eq 1 ]; then
