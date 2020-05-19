@@ -14,8 +14,8 @@ fi
 [ "$flag_menu" ] || return 0
 
 out=$(tty)
-tempfile=`(tempfile) 2>/dev/null`
-tempfile2=`(tempfile) 2>/dev/null`
+tempfile=$(mktemp)
+tempfile2=$(mktemp)
 trap "rm -f $tempfile $tempfile2" EXIT INT QUIT
 
 # declare the data structure, use associative arrays
