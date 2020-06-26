@@ -1,0 +1,17 @@
+#! /bin/bash
+
+# define classes for disk_config in an EFI enironment
+
+if [ ! -d /sys/firmware/efi ]; then
+    exit 0
+fi
+
+if ifclass FAIBASE; then
+    echo FAIBASE_EFI
+elif ifclass FAISERVER; then
+    echo FAISERVER_EFI
+elif ifclass LVM; then
+    echo LVM_EFI
+elif ifclass XENIAL; then
+    echo XENIAL_EFI
+fi

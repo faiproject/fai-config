@@ -11,14 +11,13 @@ else
     cp -f /usr/share/zoneinfo/${TIMEZONE} $target/etc/localtime
 fi
 
+if [ -f $target/etc/hosts.orig ]; then
+    mv $target/etc/hosts.orig $target/etc/hosts
+fi
 if [ -n "$IPADDR" ]; then
     ifclass DHCPC || ainsl -s /etc/hosts "$IPADDR $HOSTNAME.$DOMAIN $HOSTNAME"
 else
     ifclass DHCPC && ainsl -s /etc/hosts "127.0.0.1 $HOSTNAME"
-fi
-
-if [ -f $target/etc/hosts.orig ]; then
-    mv $target/etc/hosts.orig $target/etc/hosts
 fi
 fcopy -iM /etc/hosts /etc/motd
 
@@ -28,8 +27,10 @@ chown -c root:root $target/root
 # copy default dotfiles for root account
 fcopy -ir /root
 
-# use tmpfs for /tmp
-ainsl /etc/fstab "tmpfs     /tmp tmpfs     nodev,nosuid,size=50%,mode=1777   0    0"
+# use tmpfs for /tmp if not defined in disk_config
+if ! grep -Pq '\s/tmp\s' $target/etc/fstab; then
+    ainsl /etc/fstab "tmpfs     /tmp tmpfs     nodev,nosuid,size=50%,mode=1777   0    0"
+fi
 chmod -c 1777 ${target}/tmp
 chown -c 0:0  ${target}/tmp
 

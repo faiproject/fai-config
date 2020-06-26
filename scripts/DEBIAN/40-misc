@@ -33,7 +33,7 @@ if [ ! -f $target/etc/machine-id ]; then
     > $target/etc/machine-id
 fi
 # recreate machine-id if the file is empty
-if [ X"$(stat -c '%s' $target/etc/machine-id 2>/dev/null)"  = X0 -a -f /bin/systemd-machine-id-setup ]; then
+if [ X"$(stat -c '%s' $target/etc/machine-id 2>/dev/null)"  = X0 -a -f $target/bin/systemd-machine-id-setup ]; then
     $ROOTCMD systemd-machine-id-setup
 fi
 

@@ -46,7 +46,7 @@ fi
 
 # Make sure everything is configured properly
 if ifclass DEBIAN ; then
-        $ROOTCMD apt-get -f install
+        $ROOTCMD apt-get -f install -y
 fi
 
 if [ $FAI_ACTION = "install" ]; then
@@ -72,7 +72,7 @@ setrel() {
 	return
     fi
 
-    dists="jessie stretch buster bullseye bookworm bionic xenial trusty"
+    dists="jessie stretch buster bullseye bookworm focal bionic xenial trusty"
     for d in $dists; do
 	if grep -iq $d $target/etc/os-release; then
 	    release=$d

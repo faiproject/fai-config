@@ -64,6 +64,7 @@ libclass-errorhandler-perl
 zope-ploneerrorreporting
 libroxen-errormessage
 liberror-perl
+perl-Error
 libgpg-error-dev
 libgpg-error0
 Opts:.\+errors=remount
@@ -167,6 +168,7 @@ errors: 0
 Memory Error Correction:
 Memory Controller 0 - Channel . Error
 IIO RAS/Control Status/Global Errors
+RAS: Correctable Errors collector initialized
 __stack_chk_fail
 grub.cfg.new: Directory nonexistent
 can't derive routing for PCI INT A
@@ -176,6 +178,11 @@ Loading user firmware failed, using default values
 stunnel4 you specified can't be accessed: No such file or directory
 install-docs --verbose --check file_name' may give more details about the above errors
 cannot open '/etc/ssl/certs/java/cacerts' for reading: No such file or directory
+can't claim BAR
+disabling ASPM
+data block query control method not found
+subprocess.py.\+RuntimeWarning: line buffering
+Resource conflict.\+ found
 update-rc.d: warning: start and stop actions are no longer supported"
 
 # add pattern on some conditions

@@ -2,7 +2,7 @@
 
 # mk-basefile, create basefiles for some distributions
 #
-# Thomas Lange, Uni Koeln, 2011-2018
+# Thomas Lange, Uni Koeln, 2011-2020
 # based on the Makefile implementation of Michael Goetze
 #
 # Usage example: mk-basefile -J STRETCH64
@@ -11,7 +11,7 @@
 # Supported distributions (each i386/amd64):
 # Debian GNU/Linux
 # Ubuntu 14.04/16.04
-# CentOS 5/6/7
+# CentOS 5/6/7/8
 # Scientific Linux Cern 5/6
 #
 # Packages you might want to install to use this command:
@@ -29,11 +29,13 @@ EXCLUDE_WHEEZY=info
 EXCLUDE_JESSIE=info
 EXCLUDE_STRETCH=info
 EXCLUDE_BUSTER=
+EXCLUDE_BULLSEYE=
 EXCLUDE_SID=
 
 EXCLUDE_TRUSTY=dhcp3-client,dhcp3-common,info
 EXCLUDE_XENIAL=udhcpc,dibbler-client,info
 EXCLUDE_BIONIC=udhcpc,dibbler-client,info
+EXCLUDE_FOCAL=udhcpc,dibbler-client,info
 
 # here you can add packages, that are needed very early
 INCLUDE_DEBIAN=
@@ -130,7 +132,7 @@ cleanup-rinse() {
 
 tarit() {
 
-    tar $attributes --one-file-system -C $xtmp -cf - . | $zip > $target.$ext
+    tar $attributes --numeric-owner --one-file-system -C $xtmp -cf - . | $zip > $target.$ext
 }
 
 
@@ -204,17 +206,20 @@ prtdists() {
     CENTOS5_32   CENTOS5_64
     CENTOS6_32   CENTOS6_64
     CENTOS7_32   CENTOS7_64
+                 CENTOS8_64
     SLC5_32      SLC5_64
     SLC6_32      SLC6_64
                  SLC7_64
     TRUSTY32     TRUSTY64
     XENIAL32     XENIAL64
                  BIONIC64
+                 FOCAL64
     SQUEEZE32    SQUEEZE64
     WHEEZY32     WHEEZY64
     JESSIE32     JESSIE64
     STRETCH32    STRETCH64
     BUSTER32     BUSTER64
+    BULLSEYE32   BULLSEYE64
     SID32        SID64
 "
 }
@@ -224,7 +229,7 @@ usage() {
     cat <<EOF
 mk-basefile, create minimal base files for a Linux distritubtion
 
-   Copyright (C) 2011-2018 by Thomas Lange
+   Copyright (C) 2011-2020 by Thomas Lange
 
 Usage: mk-basefile [OPTION] ... DISTRIBUTION
 
@@ -283,14 +288,15 @@ case "$target" in
     CENTOS6_64) centos amd64 6 ;;
     CENTOS7_32) centos i386 7 ;;
     CENTOS7_64) centos amd64 7 ;;
+    CENTOS8_64) centos amd64 8 ;;
     SLC5_32) slc i386 5 ;;
     SLC5_64) slc amd64 5 ;;
     SLC6_32) slc i386 6 ;;
     SLC6_64) slc amd64 6 ;;
     SLC7_64) slc amd64 7 ;;
-    TRUSTY*|XENIAL*|BIONIC*)
+    TRUSTY*|XENIAL*|BIONIC*|FOCAL*)
         debgeneric $target $MIRROR_UBUNTU ;;
-    SQUEEZE*|WHEEZY*|JESSIE*|STRETCH*|BUSTER*|SID*)
+    SQUEEZE*|WHEEZY*|JESSIE*|STRETCH*|BUSTER*|BULLSEYE*|SID*)
         debgeneric $target $MIRROR_DEBIAN $ARCH;;
     *) echo "Unknown distribution. Aborting."
        prtdists
