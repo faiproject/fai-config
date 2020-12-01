@@ -44,6 +44,3 @@ grub-efi
 
 PACKAGES install LVM
 lvm2
-
-PACKAGES install CLOUD
-unattended-upgrades
