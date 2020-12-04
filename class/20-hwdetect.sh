@@ -20,7 +20,8 @@ for mod in $kernelmodules; do
     modprobe -a $mod 1>/dev/null 2>&1
 done
 
-ip ad show up | egrep -iv 'loopback|127.0.0.1|::1/128|_lft'
+# show the basic information about the network interface
+ip -br li show up|egrep -v ^lo; ip -br a show up|egrep -v ^lo
 
 echo $printk > /proc/sys/kernel/printk
 
