@@ -1,0 +1,14 @@
+### cryptsetup luks1 on msdos only! grub support for luks2 is not yet available
+disk_config disk1 disklabel:msdos bootable:1 fstabkey:uuid align-at:1M
+primary - 100%	-	-
+
+disk_config cryptsetup
+luks	-	disk1.1	-	- lukscreateopts="--type luks1"
+
+disk_config lvm fstabkey:uuid
+vg vg1  disk1.1
+vg1-root    /     30%-     ext4    defaults,errors=remount-ro,noatime,rw
+vg1-var     /var   10G     ext4    defaults,errors=remount-ro,noatime,rw
+vg1-swap    swap    2G     swap    sw
+
+### EOF

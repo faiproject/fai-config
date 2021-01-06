@@ -17,7 +17,7 @@ if [ -z "$BOOT_DEVICE" ]; then
 fi
 
 # disable os-prober because of #788062
-ainsl /etc/default/grub 'GRUB_DISABLE_OS_PROBER=true'
+ainsl -a /etc/default/grub.d/80_os_prober.cfg 'GRUB_DISABLE_OS_PROBER=true'
 
 # skip the rest, if not an initial installation
 if [ $FAI_ACTION != "install" ]; then
@@ -25,7 +25,11 @@ if [ $FAI_ACTION != "install" ]; then
     exit $error
 fi
 
-GROOT=$($ROOTCMD grub-probe -tdrive -d $BOOT_DEVICE)
+if test -n "$BOOT_DISK"; then
+    GROOT="$BOOT_DISK";
+else
+    GROOT=$($ROOTCMD grub-probe -tdrive -d $BOOT_DEVICE)
+fi;
 
 # handle /boot in lvm-on-md
 _bdev=$(readlink -f $BOOT_DEVICE)
@@ -44,7 +48,7 @@ if [[ $BOOT_DEVICE =~ '/dev/md' ]]; then
 else
     $ROOTCMD grub-install --no-floppy "$GROOT"
     if [ $? -eq 0 ]; then
-        echo "Grub installed on $BOOT_DEVICE = $GROOT"
+        echo "Grub installed for \"$BOOT_DEVICE\" on \"$GROOT\""
     fi
 fi
 $ROOTCMD update-grub
