@@ -53,11 +53,6 @@ newnicnames() {
 
     [ $do_init_tasks -eq 0 ] && return
     [ -z "$NIC1" ] && return
-    ver=$($ROOTCMD dpkg-query --showformat='${Version}' --show udev)
-    if dpkg --compare-versions $ver lt 220-7; then
-	return
-    fi
-
 
     fields="ID_NET_NAME_FROM_DATABASE ID_NET_NAME_ONBOARD ID_NET_NAME_SLOT ID_NET_NAME_PATH"
     for field in $fields; do
