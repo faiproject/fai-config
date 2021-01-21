@@ -19,6 +19,11 @@ PACKAGES install NONFREE
 # you may want these non-free kernel drivers
 firmware-bnx2 firmware-bnx2x firmware-realtek
 firmware-linux-nonfree
+# a list of firmware for wifi/wireless
+atmel-firmware firmware-atheros firmware-brcm80211 firmware-ipw2x00
+firmware-iwlwifi firmware-libertas firmware-ralink firmware-zd1211
+firmware-brcm80211 firmware-ti-connectivity
+
 
 PACKAGES install I386
 linux-image-686-pae
