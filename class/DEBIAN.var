@@ -2,6 +2,13 @@ release=buster
 apt_cdn=http://deb.debian.org
 security_cdn=http://security.debian.org
 
+# since bullseye Debian changed the suite name for security
+if [ $release = buster ]; then
+  secsuite=buster/updates
+else
+  secsuite=$release-security
+fi
+
 CONSOLEFONT=
 KEYMAP=us-latin1
 
