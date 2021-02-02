@@ -22,10 +22,16 @@ netcat-traditional
 openssh-client
 pciutils
 perl
-python
-python-minimal
 reportbug
 telnet
 traceroute
 ucf
 xz-utils
+
+PACKAGES install-norec STRETCH BUSTER
+python
+python-minimal
+
+PACKAGES install-norec BULLSEYE
+python3
+python3-minimal
