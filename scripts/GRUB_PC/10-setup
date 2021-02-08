@@ -41,6 +41,7 @@ if [[ $BOOT_DEVICE =~ '/dev/md' ]]; then
 	pdevice=$($ROOTCMD udevadm info -r --query=symlink /dev/$device | grep -Po '/dev/disk/by-id/ata\S+')
 	mbrdevices+="$pdevice, "
 	echo Installing grub on /dev/$device = $pdevice
+	$ROOTCMD grub-install --no-floppy "/dev/$device"
     done
     # remove last ,
     mbrdevices=${mbrdevices%, }
@@ -51,6 +52,7 @@ else
 	mbrdevices=$BOOT_DEVICE
     fi
     echo "Installing grub on $BOOT_DEVICE = $mbrdevices"
+    $ROOTCMD grub-install --no-floppy "$mbrdevices"
 fi
 
 echo "grub-pc grub-pc/install_devices multiselect $mbrdevices" | $ROOTCMD debconf-set-selections
