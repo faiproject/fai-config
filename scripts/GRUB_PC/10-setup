@@ -38,15 +38,17 @@ if [[ $BOOT_DEVICE =~ '/dev/md' ]]; then
     raiddev=${BOOT_DEVICE#/dev/}
     # install grub on all members of RAID
     for device in $(LC_ALL=C perl -ne 'if(/^'$raiddev'\s.+raid\d+\s(.+)/){ $_=$1; s/\d+\[\d+\]//g; s/(nvme.+?)p/$1/g; print }' /proc/mdstat); do
-	echo Install grub on /dev/$device
-	$ROOTCMD grub-install --no-floppy "/dev/$device"
+	pdevice=$($ROOTCMD udevadm info -r --query=symlink /dev/$device | grep -Po '/dev/disk/by-id/ata\S+')
+	mbrdevices+="$pdevice, "
+	echo Installing grub on /dev/$device = $pdevice
     done
+    # remove last ,
+    mbrdevices=${mbrdevices%, }
 else
-    $ROOTCMD grub-install --no-floppy "$GROOT"
-    if [ $? -eq 0 ]; then
-        echo "Grub installed on $BOOT_DEVICE = $GROOT"
-    fi
+    mbrdevices=$($ROOTCMD udevadm info -r --query=symlink $BOOT_DEVICE | grep -Po '/dev/disk/by-id/ata\S+')
+    echo "Installing grub on $BOOT_DEVICE = $mbrdevices"
 fi
-$ROOTCMD update-grub
 
+echo "grub-pc grub-pc/install_devices multiselect $mbrdevices" | $ROOTCMD debconf-set-selections
+$ROOTCMD dpkg-reconfigure grub-pc
 exit $error
