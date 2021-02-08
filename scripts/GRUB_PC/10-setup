@@ -46,6 +46,10 @@ if [[ $BOOT_DEVICE =~ '/dev/md' ]]; then
     mbrdevices=${mbrdevices%, }
 else
     mbrdevices=$($ROOTCMD udevadm info -r --query=symlink $BOOT_DEVICE | grep -Po '/dev/disk/by-id/ata\S+')
+    if [ -z "$mbrdevices" ]; then
+	# if we cannot find a persistent name (for e.g. in a VM) use old name
+	mbrdevices=$BOOT_DEVICE
+    fi
     echo "Installing grub on $BOOT_DEVICE = $mbrdevices"
 fi
 
