@@ -46,7 +46,7 @@ if [[ $BOOT_DEVICE =~ '/dev/md' ]]; then
     # remove last ,
     mbrdevices=${mbrdevices%, }
 else
-    mbrdevices=$($ROOTCMD udevadm info -r --query=symlink $BOOT_DEVICE | grep -Po '/dev/disk/by-id/ata\S+')
+    mbrdevices=$($ROOTCMD udevadm info -r --query=symlink $BOOT_DEVICE | grep -Po '/dev/disk/by-id/ata\S+' | cat)
     if [ -z "$mbrdevices" ]; then
 	# if we cannot find a persistent name (for e.g. in a VM) use old name
 	mbrdevices=$BOOT_DEVICE
