@@ -22,6 +22,28 @@ if [ $FAI_ACTION != "install" ]; then
     exit $error
 fi
 
+get_stable_devname() {
+
+    local _DEV="$1"
+    local i
+    declare -a _RES
+
+    # prefer SCSI over ATA over WWN over path
+    # do not use by-path
+
+    for i in $($ROOTCMD udevadm info -r --query=symlink "$_DEV"); do
+        if [[ "$i" =~ /by-id/scsi ]]; then
+            _RES[10]="$i"
+        elif [[ "$i" =~ /by-id/ata ]]; then
+            _RES[20]="$i"
+        elif [[ "$i" =~ /by-id/wwn ]]; then
+            _RES[99]="$i"
+        fi
+    done
+
+    echo "${_RES[@]::1}"
+}
+
 # handle /boot in lvm-on-md
 _bdev=$(readlink -f $BOOT_DEVICE)
 if [ "${_bdev%%-*}" = "/dev/dm" ]; then
@@ -33,7 +55,7 @@ if [[ $BOOT_DEVICE =~ '/dev/md' ]]; then
     raiddev=${BOOT_DEVICE#/dev/}
     # install grub on all members of RAID
     for device in $(LC_ALL=C perl -ne 'if(/^'$raiddev'\s.+raid\d+\s(.+)/){ $_=$1; s/\d+\[\d+\]//g; s/(nvme.+?)p/$1/g; print }' /proc/mdstat); do
-	pdevice=$($ROOTCMD udevadm info -r --query=symlink /dev/$device | grep -Po '/dev/disk/by-id/ata\S+')
+	pdevice=$(get_stable_devname /dev/$device)
 	mbrdevices+="$pdevice, "
 	echo Installing grub on /dev/$device = $pdevice
 	$ROOTCMD grub-install --no-floppy "/dev/$device"
@@ -41,7 +63,7 @@ if [[ $BOOT_DEVICE =~ '/dev/md' ]]; then
     # remove last ,
     mbrdevices=${mbrdevices%, }
 else
-    mbrdevices=$($ROOTCMD udevadm info -r --query=symlink $BOOT_DEVICE | grep -Po '/dev/disk/by-id/ata\S+' | cat)
+    mbrdevices=$(get_stable_devname $BOOT_DEVICE)
     if [ -z "$mbrdevices" ]; then
 	# if we cannot find a persistent name (for e.g. in a VM) use old name
 	mbrdevices=$BOOT_DEVICE
