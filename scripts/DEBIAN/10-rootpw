@@ -9,6 +9,9 @@ elif [ -n "$username" ]; then
     $ROOTCMD usermod -L root
     # enable sudo for user
     ainsl /etc/sudoers "$username   ALL = ALL"
+    if [ ! -f $target/usr/bin/sudo ]; then
+	echo "WARNING. Package sudo is not installed"
+    fi
 fi
 
 exit $error
