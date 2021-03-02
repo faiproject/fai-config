@@ -2,7 +2,7 @@
 
 # mk-basefile, create basefiles for some distributions
 #
-# Thomas Lange, Uni Koeln, 2011-2020
+# Thomas Lange, Uni Koeln, 2011-2021
 # based on the Makefile implementation of Michael Goetze
 #
 # Usage example: mk-basefile -J STRETCH64
@@ -31,6 +31,7 @@ EXCLUDE_STRETCH=info
 EXCLUDE_BUSTER=
 EXCLUDE_BULLSEYE=
 EXCLUDE_BOOKWORM=
+EXCLUDE_TRIXIE=
 EXCLUDE_SID=
 
 EXCLUDE_TRUSTY=dhcp3-client,dhcp3-common,info
@@ -222,6 +223,7 @@ prtdists() {
     BUSTER32     BUSTER64
     BULLSEYE32   BULLSEYE64
     BOOKWORM32   BOOKWORM64
+    TRIXIE32     TRIXIE64
     SID32        SID64
 "
 }
