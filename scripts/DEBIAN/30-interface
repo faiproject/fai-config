@@ -38,9 +38,7 @@ iface_stanza() {
     echo "iface $IFNAME inet $METHOD"
     case "$METHOD" in
       static)
-        echo "    address $IPADDR"
-        echo "    netmask $NETMASK"
-        echo "    broadcast $BROADCAST"
+        echo "    address $CIDR"
         echo "    gateway $GATEWAYS"
         ;;
     esac
