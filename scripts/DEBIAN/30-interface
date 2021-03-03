@@ -74,7 +74,7 @@ newnicnames() {
 if [ -z "$NIC1" ]; then
     echo "WARNING: \$NIC1 is not defined. Cannot add ethernet to /etc/network/interfaces."
 fi
-CIDR=$(ip -o -f inet addr show $NIC1 | awk '{print $4}')
+CIDR=$(ip --br ad sh $NIC1|awk '{print $3}')
 newnicnames
 
 case "$FAI_ACTION" in
