@@ -18,7 +18,9 @@ if [ $FAI_ACTION = "install" -o $FAI_ACTION = "dirinstall" ] ; then
     ainsl -av /etc/apt/apt.conf.d/02proxy 'Acquire::http::Proxy "http://127.0.0.1:3142";'
 
     # create some host entries
-    myip=$(ip addr show up| grep -P -o '(?<=inet )[^/]+' | grep -v 127.0.0.1)
+    _nic=$(ip route | awk '/^default/ {print $5}'|head -1)
+    myip=$(ip -br ad sh $_nic | awk '{print $3}')
+    myip=${myip%/*}
     ainsl /etc/hosts "$myip faiserver"  # that's me
     ainsl /etc/hosts "192.168.33.100 demohost"
     ainsl /etc/hosts "192.168.33.101 xfcehost"
