@@ -34,7 +34,7 @@ downloaded from the internet.
 Classes: INSTALL FAIBASE CENTOS CENTOS8_64 XORG
 
 Name: Ubuntu
-Description: Ubuntu 20.04 desktop installation
+Description: Ubuntu 20.04 LTS desktop installation
 Short: Unity desktop
 Long: We use the Debian nfsroot for installing the Ubuntu OS.
 You should have a fast network connection, because most packages are
