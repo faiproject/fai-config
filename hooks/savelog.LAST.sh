@@ -13,7 +13,6 @@ warn
  bad
 bad 
 no space
-syntax
 Couldn't stat
 Cannot access
  conflict
