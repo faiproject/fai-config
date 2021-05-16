@@ -6,10 +6,9 @@ if [ ! -d /sys/firmware/efi ]; then
     exit 0
 fi
 
-if ifclass FAIBASE; then
-    echo FAIBASE_EFI
-elif ifclass FAISERVER; then
-    echo FAISERVER_EFI
-elif ifclass LVM; then
-    echo LVM_EFI
-fi
+for c in LVM FAISERVER FAIBASE; do
+    if ifclass $c; then
+	echo ${c}_EFI
+	break
+    fi
+done
