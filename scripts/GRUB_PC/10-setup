@@ -59,6 +59,10 @@ if [[ $BOOT_DEVICE =~ '/dev/md' ]]; then
     # install grub on all members of RAID
     for device in $(LC_ALL=C perl -ne 'if(/^'$raiddev'\s.+raid\d+\s(.+)/){ $_=$1; s/\d+\[\d+\]//g; s/(nvme.+?)p/$1/g; print }' /proc/mdstat); do
 	pdevice=$(get_stable_devname /dev/$device)
+	if [ -z "$pdevice" ]; then
+	    # if we cannot find a persistent name (for e.g. in a VM) use old name
+	    pdevice="/dev/$device"
+	fi
 	mbrdevices+="$pdevice, "
 	echo Installing grub on /dev/$device = $pdevice
 	$ROOTCMD grub-install --no-floppy "/dev/$device"
