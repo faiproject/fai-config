@@ -2,7 +2,7 @@
 
 # define classes for disk_config in an EFI enironment
 
-if [ ! -d /sys/firmware/efi ]; then
+if [ ! -d /sys/firmware/efi ] || ifclass GRUB_PC; then
     exit 0
 fi
 
