@@ -24,7 +24,7 @@
 MIRROR_DEBIAN=http://deb.debian.org/debian/
 MIRROR_UBUNTU=http://mirror.netcologne.de/ubuntu/
 MIRROR_CENTOS=http://mirror.netcologne.de/
-
+MIRROR_ROCKY=http://download.rockylinux.org/
 EXCLUDE_SQUEEZE=isc-dhcp-client,isc-dhcp-common,info
 EXCLUDE_WHEEZY=info
 EXCLUDE_JESSIE=info
@@ -107,6 +107,18 @@ EOM
     chmod 555 $xtmp/post
 }
 
+mkpost-rocky() {
+
+    # set local mirror for rinse post script
+    [ -z "$MIRROR_ROCKY" ] && return
+    cat <<EOM > $xtmp/post
+#! /bin/sh
+mkdir -p $xtmp/etc/yum.repos.d/orig
+cp -p $xtmp/etc/yum.repos.d/*.repo $xtmp/etc/yum.repos.d/orig
+perl -pi -e 's,mirrorlist=,#mirrorlist=,; s,#baseurl=http://download.rockylinux.org,baseurl=$MIRROR_ROCKY,;' $xtmp/etc/yum.repos.d/Rocky-BaseOS.repo
+EOM
+    chmod 555 $xtmp/post
+}
 
 cleanup-deb() {
 
@@ -184,6 +196,20 @@ slc() {
     tarit
 }
 
+rocky() {
+
+    local arch=$1
+    local vers=$2
+    local domain=$(domainname)
+
+    check
+    setarch $arch
+    mkpost-rocky
+    $l32 rinse --directory $xtmp --distribution rocky-$vers --arch $arch --before-post-install $xtmp/post
+    domainname $domain # workaround for #613377
+    cleanup-rinse
+    tarit
+}
 
 debgeneric() {
 
@@ -230,6 +256,7 @@ prtdists() {
     SLC5_32      SLC5_64
     SLC6_32      SLC6_64
                  SLC7_64
+                 ROCKY8_64
     TRUSTY32     TRUSTY64
     XENIAL32     XENIAL64
                  BIONIC64
@@ -312,7 +339,7 @@ case "$target" in
     CENTOS7_32) centos i386 7 ;;
     CENTOS7_64) centos amd64 7 ;;
     CENTOS8_64) centos amd64 8 ;;
-    ROCKY8_64) rocky amd64 8 ;;
+    ROCKY8_64) rocky amd64 8;;
     SLC5_32) slc i386 5 ;;
     SLC5_64) slc amd64 5 ;;
     SLC6_32) slc i386 6 ;;
