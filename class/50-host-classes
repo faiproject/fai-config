@@ -16,7 +16,7 @@ case $HOSTNAME in
     gnomehost)
         echo "FAIBASE DEBIAN DEMO XORG GNOME";;
     ubuntuhost)
-        echo "FAIBASE DEBIAN DEMO UBUNTU FOCAL FOCAL64 XORG";;
+        echo "FAIBASE DEBIAN DEMO UBUNTU JAMMY JAMMY64 XORG";;
     centos)
         echo "FAIBASE CENTOS"   # you may want to add class XORG here
         ifclass AMD64 && echo CENTOS8_64
