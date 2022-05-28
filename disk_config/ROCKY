@@ -4,12 +4,6 @@
 
 disk_config disk1 disklabel:msdos bootable:1 fstabkey:label
 
-# Note that the CentOS 5 version of GRUB cannot read from ext3 filesystems with inode_size > 128
-# CentOS 5.6 needs /boot as ext3, so we use ext3 for /
-
-#primary /      350      ext3  rw,noatime,errors=remount-ro createopts="-L ROOT -I 128"
-
-# use following line for CentOS 7
 primary /      4G-50G    ext4  rw,noatime,errors=remount-ro createopts="-L ROOT"
 
 logical swap   200-10G  swap  sw                           createopts="-L SWAP"
