@@ -31,8 +31,8 @@ if [ -f $target/etc/debian_version ]; then
 fi
 if [ -f $target/etc/centos-release ]; then
     rm $target/etc/grub2/device.map
-    $FAI/scripts/CENTOS/40-install-grub
-    $FAI/scripts/CENTOS/30-mkinitrd
+    $FAI/scripts/ROCKY/40-install-grub
+    $FAI/scripts/ROCKY/30-mkinitrd
     $ROOTCMD fixfiles onboot # this fixes the SELinux security contexts during the first boot
 fi
 

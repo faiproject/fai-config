@@ -17,9 +17,9 @@ case $HOSTNAME in
         echo "FAIBASE DEBIAN DEMO XORG GNOME";;
     ubuntuhost)
         echo "FAIBASE DEBIAN DEMO UBUNTU JAMMY JAMMY64 XORG";;
-    centos)
-        echo "FAIBASE CENTOS"   # you may want to add class XORG here
-        ifclass AMD64 && echo CENTOS8_64
+    rocky)
+        echo "FAIBASE ROCKY"   # you may want to add class XORG here
+        ifclass AMD64 && echo ROCKY8_64
 	;;
     slchost)
         # Scientific Linux Cern, is very similar to CentOS. SLC should alsways use the class CENTOS
