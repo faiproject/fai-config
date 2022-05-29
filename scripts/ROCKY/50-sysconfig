@@ -18,6 +18,12 @@ cat > $target/etc/sysconfig/keyboard <<-EOF
 	KEYTABLE="$KEYMAP"
 	EOF
 
+# can not be used, because we still not use systemd in FAI
+# $ROOTCMD localectl set-locale LANG=$DEFAULTLOCALE
+
+cat > $target/etc/locale.conf <<-EOF
+	LANG="$DEFAULTLOCALE"
+	EOF
 if [ -f $target/usr/lib/locale/locale-archive.tmpl \
      -a  ! -s $target/usr/lib/locale/locale-archive ]; then
     mv $target/usr/lib/locale/locale-archive.tmpl $target/usr/lib/locale/locale-archive
