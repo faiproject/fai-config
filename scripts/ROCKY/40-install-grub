@@ -36,8 +36,6 @@ fi
 
 mount -o bind /dev $target/dev
 
-
-
 if [ -f $target/usr/sbin/grub2-install ]; then
 
     # CentOS 7
@@ -62,13 +60,6 @@ else
 	pretty="color cyan/blue white/blue"
 fi
 
-if [ -f $target/sbin/dracut -o -f $target/usr/sbin/dracut ]; then
-    # CentOS 6
-    iname=initramfs
-else
-    # CentOS 5
-    iname=initrd
-fi
 title=$(head -1 $target/etc/redhat-release)
 
 cat > $target/boot/grub/grub.conf <<-EOF
@@ -80,7 +71,7 @@ cat > $target/boot/grub/grub.conf <<-EOF
 	title $title
 	  root $bootpart
 	  kernel $bootdir/vmlinuz-$version root=$ROOT_PARTITION ro
-	  initrd $bootdir/$iname-$version.img
+	  initrd $bootdir/initramfs-$version.img
 	EOF
 
 fi
