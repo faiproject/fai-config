@@ -14,7 +14,6 @@ chrony
 kernel
 dracut
 grub2-pc
-# CentOS 7
 less
 openssh
 openssh-clients
