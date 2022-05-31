@@ -1,0 +1,25 @@
+#! /bin/bash
+
+if [ ! -f $target/etc/resolv.conf ]; then
+    cp /etc/resolv.conf $target/etc
+fi
+
+if [ X$verbose = X1 ]; then
+	echo "Updating base"
+	$ROOTCMD yum -y update |& tee -a $LOGDIR/software.log
+else
+	$ROOTCMD yum -y update >> $LOGDIR/software.log
+fi
+
+$ROOTCMD systemd-machine-id-setup
+
+cat > $target/etc/sysconfig/kernel <<EOF
+# UPDATEDEFAULT specifies if new-kernel-pkg should make
+# new kernels the default
+UPDATEDEFAULT=yes
+
+# DEFAULTKERNEL specifies the default kernel package type
+DEFAULTKERNEL=kernel-core
+EOF
+
+skiptask updatebase

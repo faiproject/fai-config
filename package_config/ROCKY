@@ -1,0 +1,32 @@
+PACKAGES dnfgroup
+core
+minimal-environment
+standard
+#server-product-environment
+#headless-management
+
+PACKAGES dnfgroup XORG
+graphical-server-environment
+workstation-product-environment
+
+PACKAGES dnfi
+NetworkManager
+chrony
+kernel
+dracut
+grub2-pc
+perl
+glibc-all-langpacks
+less
+openssh
+openssh-clients
+openssh-server
+vim-enhanced
+man
+curl
+unzip
+which
+ncurses ncurses-base
+
+PACKAGES dnfi LVM
+lvm2

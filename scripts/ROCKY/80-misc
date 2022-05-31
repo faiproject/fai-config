@@ -1,0 +1,26 @@
+#! /bin/bash
+
+error=0 ; trap "error=$((error|1))" ERR
+
+# add a $username user account
+if [ -n "$username" ]; then
+    if ! $ROOTCMD getent passwd $username ; then
+	$ROOTCMD adduser -c "$username user" $username
+	$ROOTCMD usermod -p "$USERPW" $username
+    fi
+fi
+
+# enable graphical login screen, make run level 5 as default
+if [ -f $target/usr/sbin/gdm ]; 
+    $ROOTCMD systemctl set-default graphical.target
+    # do not run this tool
+    echo "RUN_FIRSTBOOT=NO" > $target/etc/sysconfig/firstboot
+else
+    $ROOTCMD  systemctl set-default multi-user.target
+fi
+
+# enable login prompt in tty1
+$ROOTCMD systemctl enable getty@tty1.service
+
+exit $error
+
