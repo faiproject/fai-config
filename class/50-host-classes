@@ -19,8 +19,9 @@ case $HOSTNAME in
         echo "FAIBASE DEBIAN DEMO UBUNTU FOCAL FOCAL64 XORG";;
     centos)
         echo "FAIBASE CENTOS"   # you may want to add class XORG here
-        ifclass AMD64 && echo CENTOS8_64
-	;;
+        ifclass AMD64 && echo CENTOS8_64;;
+    rocky)
+        echo "FAIBASE ROCKY";;
     slchost)
         # Scientific Linux Cern, is very similar to CentOS. SLC should alsways use the class CENTOS
         echo "FAIBASE CENTOS SLC"  # you may want to add class XORG here
