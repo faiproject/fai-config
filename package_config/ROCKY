@@ -1,6 +1,7 @@
 PACKAGES dnfgroup
 core
 minimal-environment
+standard
 #server-product-environment
 #headless-management
 
@@ -14,7 +15,8 @@ chrony
 kernel
 dracut
 grub2-pc
-# CentOS 7
+perl
+glibc-all-langpacks
 less
 openssh
 openssh-clients

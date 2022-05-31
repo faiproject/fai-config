@@ -5,7 +5,18 @@
 
 error=0; trap 'error=$(($?>$error?$?:$error))' ERR # save maximum error code
 
-$ROOTCMD usermod -p $ROOTPW root
+
+# set root password
+if [ -n "$ROOTPW" ]; then
+    $ROOTCMD chpasswd --encrypted <<< "root:${ROOTPW}"
+elif [ -n "$username" ]; then
+    $ROOTCMD usermod -L root
+    # enable sudo for user
+    ainsl /etc/sudoers "$username   ALL = ALL"
+    if [ ! -f $target/usr/bin/sudo ]; then
+	echo "WARNING. Package sudo is not installed"
+    fi
+fi
 
 fcopy -v /etc/selinux/config
 $ROOTCMD fixfiles onboot # this fixes the SELinux security contexts during the first boot

@@ -10,16 +10,14 @@ ainsl -v /etc/fstab "sysfs	/sys	sysfs	auto		0 0"
 
 version=$($ROOTCMD rpm -qv kernel | cut -d- -f2-)
 
-
 if [ -f $target/etc/lvm/lvm.conf ]; then
      sed -i -e 's/use_lvmetad = 1/use_lvmetad = 0/' $target/etc/lvm/lvm.conf
      ainsl -av /etc/dracut.conf.d/fai.conf 'add_dracutmodules+=" lvm "'
 fi
 
-
 # add filesystem driver into initrd
 ainsl -av /etc/dracut.conf.d/fai.conf 'filesystems+="ext4"'
-$ROOTCMD dracut -v --kver $version --force
 
+$ROOTCMD dracut -v --kver $version --no-hostonly --force
 
 exit $error
