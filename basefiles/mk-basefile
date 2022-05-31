@@ -14,13 +14,14 @@
 # Rocky Linux 8
 # CentOS 5/6/7/8
 # Scientific Linux Cern 5/6
+# Rocky Linux 8
 #
 # Packages you might want to install to use this command:
 # debootstrap, rinse, xz-utils
 
 
 # Define your local mirros here
-# For the first stage, set the CentOS/SLC mirror in /etc/rinse/rinse.conf
+# For the first stage, set the CentOS/SLC/Rocky mirror in /etc/rinse/rinse.conf
 MIRROR_DEBIAN=http://deb.debian.org/debian/
 MIRROR_UBUNTU=http://mirror.netcologne.de/ubuntu/
 MIRROR_CENTOS=http://mirror.netcologne.de/
