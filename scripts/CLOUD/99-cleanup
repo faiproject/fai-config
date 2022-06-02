@@ -5,8 +5,8 @@ if [ -f $target/files/etc/init.d/expand-root ]; then
     $ROOTCMD insserv --default expand-root
 fi
 
-sed -i "s/PermitRootLogin yes/PermitRootLogin without-password/" $target/etc/ssh/sshd_config
-ainsl /etc/ssh/sshd_config 'ClientAliveInterval 120'
+ainsl -a /etc/ssh/sshd_config.d/PermitRootLogin.conf 'PermitRootLogin without-password'
+ainsl -a /etc/ssh/sshd_config.d/ClientAliveInterval.conf 'ClientAliveInterval 120'
 
 ainsl -a /etc/modprobe.d/blacklist.conf 'blacklist pcspkr'
 ainsl -a /etc/modprobe.d/blacklist.conf 'blacklist floppy'
