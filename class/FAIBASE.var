@@ -17,6 +17,10 @@ STOP_ON_ERROR=700
 # set parameter for install_packages(8)
 MAXPACKAGES=800
 
+# Account on the FAI server for saving log files and calling fai-chboot.
+# Remove the hash character in the next line to activate this feature
+#LOGUSER=fai
+
 # a user account will be created
 username=demo
 USERPW='$1$kBnWcO.E$djxB128U7dMkrltJHPf6d1'
