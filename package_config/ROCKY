@@ -13,7 +13,6 @@ NetworkManager
 chrony
 kernel
 dracut
-grub2-pc
 less
 openssh
 openssh-clients
@@ -24,6 +23,13 @@ curl
 unzip
 which
 ncurses ncurses-base
+
+PACKAGES dnfi GRUB_PC
+grub2-pc
+
+PACKAGES dnfi GRUB_EFI
+grub2-efi
+
 
 PACKAGES dnfi LVM
 lvm2
