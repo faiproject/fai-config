@@ -134,7 +134,7 @@ cleanup-rinse() {
 
 tarit() {
 
-    tar $attributes --numeric-owner --one-file-system -C $xtmp -cf - --exclude etc/machine-id --exclude var/lib/dbus/machine-id . | $zip > $target.$ext
+    tar $attributes --numeric-owner --one-file-system -C $xtmp -cf - --exclude var/lib/dbus/machine-id . | $zip > $target.$ext
 }
 
 
