@@ -81,7 +81,7 @@ parse_profile() {
 	    arclasses[$name]="$classes"
 	    continue
 	fi
-	
+
 	if [[ $line =~ "Long: " ]]; then
             lflag=1
             long=${line##Long: }
@@ -115,7 +115,7 @@ prtresult() {
 }
 
 
-# read all files with name matching *.profile 
+# read all files with name matching *.profile
 _parsed=0
 shopt -s nullglob
 for _f in *.profile; do

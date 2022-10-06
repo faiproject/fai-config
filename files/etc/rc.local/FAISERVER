@@ -25,7 +25,7 @@ sleep 8
 echo "================================="
 echo "Setting up the FAI install server"
 echo "This will take a few minutes"
-echo "=================================" 
+echo "================================="
 
 . /etc/fai/fai.conf
 . /etc/fai/nfsroot.conf
@@ -57,9 +57,9 @@ fi
 if [ $? -eq 0 ]; then
     rm /var/tmp/base.tar.xz
     echo ""
-    echo "================================================" 
+    echo "================================================"
     echo -e "Setting up the FAI server was ${GREEN}successful${NORMAL}"
-    echo "================================================" 
+    echo "================================================"
     echo ""
     sleep 10
 else
