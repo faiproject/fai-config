@@ -12,7 +12,7 @@ version=$($ROOTCMD rpm -qv kernel | cut -d- -f2-)
 
 
 if [ -f $target/etc/lvm/lvm.conf ]; then
-     sed -i -e 's/use_lvmetad = 1/use_lvmetad = 0/' $target/etc/lvm/lvm.conf
+     fai-sed 's/use_lvmetad = 1/use_lvmetad = 0/' /etc/lvm/lvm.conf
      ainsl -av /etc/dracut.conf.d/fai.conf 'add_dracutmodules+=" lvm "'
 fi
 

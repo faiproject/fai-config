@@ -94,7 +94,7 @@ deb $security_cdn/debian-security ${secsuite} main contrib non-free
 EOF
     # if the package fai-server was installed, enable the project's repository
     if dpkg-query --admindir=$target/var/lib/dpkg -W fai-server >/dev/null 2>&1; then
-	sed -i -e '/fai-project.org/s/^#//' $target/etc/apt/sources.list
+	fai-sed '/fai-project.org/s/^#//' /etc/apt/sources.list
     fi
 fi
 

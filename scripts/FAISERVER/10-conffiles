@@ -27,7 +27,7 @@ if [ $FAI_ACTION = "install" -o $FAI_ACTION = "dirinstall" ] ; then
     # add entries for 10 hosts called client 01 .. 10
     perl -e 'for (1..10) {printf "192.168.33.%s client%02s\n",101+$_,$_;}' >> $target/etc/hosts
 
-    sed -i -e '/# ReuseConnections: 1/d' $target/etc/apt-cacher-ng/acng.conf
+    fai-sed '/# ReuseConnections: 1/d' /etc/apt-cacher-ng/acng.conf
     ainsl -v /etc/apt-cacher-ng/acng.conf "ReuseConnections: 0"
 
     # copy base file for faster building of nfsroot
