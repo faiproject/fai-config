@@ -37,7 +37,7 @@ if [ X"$(stat -c '%s' $target/etc/machine-id 2>/dev/null)"  = X0 -a -f $target/b
     $ROOTCMD systemd-machine-id-setup
 fi
 
-ln -fs ../proc/self/mounts $target/etc/mtab
+fai-link /etc/mtab ../proc/self/mounts
 
 rm -f $target/etc/dpkg/dpkg.cfg.d/fai $target/etc/dpkg/dpkg.cfg.d/unsafe-io
 
