@@ -47,7 +47,7 @@ PACKAGES install GRUB_PC
 grub-pc
 
 PACKAGES install GRUB_EFI
-grub-efi
+grub-efi dosfstools
 
 PACKAGES install LVM
 lvm2
