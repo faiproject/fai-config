@@ -18,6 +18,11 @@ else
     fi
   fi
 
+  if [ -f $target/etc/crypttab ] && [ ! -f $target/sbin/cryptsetup ]; then
+      echo ERROR: Encrypted devices used, but the crypsetup package was not installed.
+      echo ERROR: You want to add cryptsetup-initramfs or dracut to some package_config file.
+  fi
+
   usedm=$(dmsetup ls 2>/dev/null | egrep -v '^live-rw|^live-base|^No devices found' | wc -l)
   if [ $usedm -ne 0 ]; then
     if [ ! -d $target/etc/lvm ]; then
