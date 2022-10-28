@@ -1,5 +1,4 @@
 PACKAGES install-norec
-apt-transport-https # is only needed for stretch
 #cryptsetup-initramfs # needed if you use an encrypted partition
 debconf-utils
 file
