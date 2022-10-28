@@ -46,7 +46,6 @@ iface_stanza() {
 
 newnicnames() {
 
-    # determine predictable network names only for stretch and above
     local name
 
     [ $do_init_tasks -eq 0 ] && return
