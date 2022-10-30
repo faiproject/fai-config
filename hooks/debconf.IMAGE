@@ -3,7 +3,7 @@
 # hook for installing a file system image (tar file)
 # this works for Ubuntu 14.04
 #
-# Copyright (C) 2015 Thomas Lange, lange@informatik.uni-koeln.de
+# Copyright (C) 2015 Thomas Lange, lange@cs.uni-koeln.de
 
 
 # I use this tar command to create the image of an already running and configured machine

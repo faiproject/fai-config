@@ -2,7 +2,7 @@
 
 # Subroutines for automatic tests
 #
-# Copyright (C) 2009 Thomas Lange, lange@informatik.uni-koeln.de
+# Copyright (C) 2009 Thomas Lange, lange@cs.uni-koeln.de
 # Based on the first version by Sebastian Hetze, 08/2008
 
 package FAITEST;

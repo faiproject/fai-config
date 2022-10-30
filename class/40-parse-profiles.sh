@@ -2,7 +2,7 @@
 
 # parse *.profile and build a curses menu, so the user can select a profile
 #
-# (c) 2015 by Thomas Lange, lange@informatik.uni-koeln.de
+# (c) 2015 by Thomas Lange, lange@cs.uni-koeln.de
 # Universitaet zu Koeln
 
 if [ X$FAI_ACTION = Xinstall -o X$FAI_ACTION = Xdirinstall -o X$FAI_ACTION = X ]; then

@@ -1,6 +1,6 @@
 #! /bin/bash
 
-# (c) Thomas Lange, 2002-2013, lange@informatik.uni-koeln.de
+# (c) Thomas Lange, 2002-2013, lange@cs.uni-koeln.de
 
 # NOTE: Files named *.sh will be evaluated, but their output ignored.
 
