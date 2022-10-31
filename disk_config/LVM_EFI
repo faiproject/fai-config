@@ -5,7 +5,7 @@
 disk_config disk1 disklabel:gpt fstabkey:uuid align-at:1M
 
 primary /boot/efi 512M  vfat    rw
-primary /boot	200	ext2	rw,noatime
+primary /boot	200	ext4	rw,noatime
 primary -       4G-	-       -
 
 disk_config lvm
