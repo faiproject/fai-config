@@ -6,7 +6,7 @@ if [ ! -d /sys/firmware/efi ] || ifclass GRUB_PC; then
     exit 0
 fi
 
-for c in LVM FAISERVER FAIBASE; do
+for c in CLOUD LVM FAISERVER FAIBASE; do
     if ifclass $c; then
 	echo ${c}_EFI
 	break
