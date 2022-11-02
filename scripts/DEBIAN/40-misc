@@ -39,7 +39,7 @@ fi
 
 fai-link /etc/mtab ../proc/self/mounts
 
-rm -f $target/etc/dpkg/dpkg.cfg.d/fai $target/etc/dpkg/dpkg.cfg.d/unsafe-io
+rm -f $target/etc/dpkg/dpkg.cfg.d/unsafe-io
 
 if [ -d /etc/fai ]; then
     if ! fcopy -Mv /etc/fai/fai.conf; then
