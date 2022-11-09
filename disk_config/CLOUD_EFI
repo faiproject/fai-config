@@ -1,8 +1,8 @@
 # config for a disk image for a VM
 #
-# <type> <mountpoint> <size>   <fs type> <mount options> <misc options>
+# p=<partlabel> <mountpoint> <size>   <fs type> <mount options> <misc options>
 
 disk_config disk1 disklabel:gpt bootable:1 fstabkey:uuid align-at:1M
 
-primary /boot/efi 64M   vfat  defaults  createopts="-F 32"
-primary /         300-  ext4  rw,discard,barrier=0,noatime,errors=remount-ro tuneopts="-c 0 -i 0"
+p=efi  /boot/efi 64M   vfat  defaults  createopts="-F 32"
+p=root /         300-  ext4  rw,discard,barrier=0,noatime,errors=remount-ro tuneopts="-c 0 -i 0"
