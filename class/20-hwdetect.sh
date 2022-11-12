@@ -8,12 +8,11 @@
 
 echo 0 > /proc/sys/kernel/printk
 
-#kernelmodules=
-# here, you can load modules depending on the kernel version
-case $(uname -r) in
-    2.6*) kernelmodules="$kernelmodules mptspi dm-mod md-mod aes dm-crypt" ;;
-    [3456]*) kernelmodules="$kernelmodules mptspi dm-mod md-mod aes dm-crypt" ;;
-esac
+# example how to load modules depending on the kernel version
+#case $(uname -r) in
+#    2.6*) kernelmodules="$kernelmodules mptspi dm-mod md-mod aes dm-crypt" ;;
+#    [3456]*) kernelmodules="$kernelmodules mptspi dm-mod md-mod aes dm-crypt" ;;
+#esac
 
 for mod in $kernelmodules; do
     [ X$verbose = X1 ] && echo Loading kernel module $mod
