@@ -1,0 +1,35 @@
+#! /bin/bash
+
+# (c) Thomas Lange, 2022, lange@debian.org
+#
+# Add public ssh key for user root to get login access
+
+error=0; trap 'error=$(($?>$error?$?:$error))' ERR # save maximum error code
+
+SSHDIR=$target/root/.ssh
+AUKEY=$SSHDIR/authorized_keys
+
+# reverse order of classes
+for c in $classes; do
+    revclasses="$c $revclasses"
+done
+
+for c in $revclasses; do
+    if [ -f $FAI/files/root-ssh-key/$c ]; then
+        if [ -f $AUKEY ]; then
+            cmp -s $FAI/files/root-ssh-key/$c $AUKEY
+            if [ $? -eq 0 ]; then
+                exit
+            fi
+        fi
+        if [ ! -d $SSHDIR ]; then
+            mkdir -m 700 $SSHDIR
+        fi
+        cp -v $FAI/files/root-ssh-key/$c $AUKEY
+        chown root:root $AUKEY
+        chmod 700 $AUKEY
+        break
+    fi
+done
+
+exit $error
