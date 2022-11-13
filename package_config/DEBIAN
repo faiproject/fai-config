@@ -2,6 +2,7 @@ PACKAGES install-norec
 #cryptsetup-initramfs # needed if you use an encrypted partition
 debconf-utils
 file
+zstd
 less
 linuxlogo
 rsync
