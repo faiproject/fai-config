@@ -25,13 +25,13 @@ You should have a fast network connection, because most packages are
 downloaded from the internet.
 Classes: INSTALL FAIBASE DEBIAN DEMO XORG GNOME
 
-Name: Rocky Linux 8
-Description: Rocky Linux 8 with Xfce desktop
-Short: A normal Xfce desktop, running Rocky Linux 8
-Long: We use the Debian nfsroot for installing the Rocky Linux 8 OS.
+Name: Rocky Linux
+Description: Rocky Linux 9 with Xfce desktop
+Short: A normal Xfce desktop, running Rocky Linux 9
+Long: We use the Debian nfsroot for installing the Rocky Linux 9 OS.
 You should have a fast network connection, because most packages are
 downloaded from the internet.
-Classes: INSTALL FAIBASE ROCKY ROCKY8_64 XORG
+Classes: INSTALL FAIBASE ROCKY ROCKY9_64 XORG
 
 Name: Ubuntu
 Description: Ubuntu 22.04 LTS desktop installation
