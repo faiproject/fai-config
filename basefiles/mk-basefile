@@ -325,7 +325,7 @@ case "$target" in
     SLC7_64) slc amd64 7 ;;
     TRUSTY*|XENIAL*|BIONIC*|FOCAL*|JAMMY*)
         debgeneric $target $MIRROR_UBUNTU ;;
-    SQUEEZE*|WHEEZY*|JESSIE*|STRETCH*|BUSTER*|BULLSEYE*|BOOKWORM*|TRIXIE*|SID*)
+    SQUEEZE*|WHEEZY*|JESSIE*|STRETCH*|BUSTER*|BULLSEYE*|BOOKWORM*|TRIXIE*|FORKY*|SID*)
         debgeneric $target $MIRROR_DEBIAN $ARCH;;
     *) echo "Unknown distribution. Aborting."
        prtdists
