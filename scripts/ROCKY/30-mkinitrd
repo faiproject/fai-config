@@ -18,7 +18,7 @@ fi
 
 
 # add filesystem driver into initrd
-ainsl -av /etc/dracut.conf.d/fai.conf 'filesystems+="ext4"'
+ainsl -av /etc/dracut.conf.d/fai.conf 'filesystems+=" ext4 "'
 $ROOTCMD dracut -v --kver $version --force
 
 
