@@ -1,7 +1,5 @@
 #! /bin/bash
 
-ifclass -o CENTOS ROCKY && exit 0
-
 ifclass -o GRUB_PC GRUB_EFI && exit 0
 
 if [ -d /sys/firmware/efi ]; then
