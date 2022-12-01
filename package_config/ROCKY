@@ -10,6 +10,7 @@ workstation-product-environment
 
 PACKAGES dnfi
 NetworkManager
+dbus-broker # needed by systemd
 chrony
 kernel
 dracut
@@ -23,6 +24,8 @@ curl
 unzip
 which
 ncurses ncurses-base
+coreutils-common
+libibverbs # needed for nc, but missing dependency
 
 PACKAGES dnfi GRUB_PC
 grub2-pc
