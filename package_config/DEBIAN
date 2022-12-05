@@ -28,8 +28,7 @@ firmware-netronome firmware-netxen firmware-realtek
 firmware-cavium
 # firmware-ipw2x00 # needs a debconf question
 
-PACKAGES install-norec I386
-linux-image-686-pae
+PACKAGES install-norec I386 AMD64
 memtest86+
 
 PACKAGES install-norec CHROOT
@@ -37,12 +36,12 @@ linux-image-686-pae-
 linux-image-amd64-
 
 PACKAGES install-norec AMD64
-linux-image-amd64
+${kernelname} # see class/93-kernelname.sh
 memtest86+
 
 PACKAGES install-norec ARM64
+${kernelname} # see class/93-kernelname.sh
 grub-efi-arm64
-linux-image-arm64
 
 PACKAGES install GRUB_PC
 grub-pc

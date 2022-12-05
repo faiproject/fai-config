@@ -1,20 +1,18 @@
-PACKAGES install I386
-linux-image-generic
-memtest86+
-
-PACKAGES install CHROOT
-linux-image-generic-
-
-PACKAGES install AMD64
-linux-image-generic
-memtest86+
-
-PACKAGES install GRUB_PC
-grub-pc
+# the kernel is now defined in DEBIAN
 
 PACKAGES install
 ubuntu-minimal
 ubuntu-server
 
+PACKAGES install XORG
+ubuntu-server-
+ubuntu-standard
+ubuntu-desktop
+
 PACKAGES install GERMAN
 language-pack-gnome-de
+
+PACKAGES install CHROOT
+# a chroot does not need a kernel.
+# See class/93-kernelname.sh for the exact package name
+${kernelname}-
