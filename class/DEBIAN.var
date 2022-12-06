@@ -1,4 +1,4 @@
-release=bullseye
+release=bookworm
 apt_cdn=http://deb.debian.org
 security_cdn=http://security.debian.org
 
