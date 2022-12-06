@@ -29,7 +29,13 @@ MODULESLIST="usbhid psmouse"
 # The linux-image package has different names for Debian and Ubuntu
 if ifclass UBUNTU; then
     kernelname=linux-image-generic
-else
+elif ifclass I386; then
+   kernelname=linux-image-686-pae
+elif ifclass AMD64; then
+   kernelname=linux-image-amd64
+fi
+
+if [ -z "kernelname" ]; then
     _arch=$(dpkg --print-architecture 2>/dev/null)
     case $_arch in
         i386)
