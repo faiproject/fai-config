@@ -182,6 +182,7 @@ disabling ASPM
 data block query control method not found
 subprocess.py.\+RuntimeWarning: line buffering
 Resource conflict.\+ found
+os-prober will not be executed
 update-rc.d: warning: start and stop actions are no longer supported"
 
 # add pattern on some conditions
