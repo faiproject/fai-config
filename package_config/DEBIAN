@@ -43,10 +43,10 @@ PACKAGES install-norec ARM64
 ${kernelname} # see class/93-kernelname.sh
 grub-efi-arm64
 
-PACKAGES install GRUB_PC
+PACKAGES install-norec GRUB_PC
 grub-pc
 
-PACKAGES install GRUB_EFI
+PACKAGES install-norec GRUB_EFI
 grub-efi dosfstools
 
 PACKAGES install LVM
