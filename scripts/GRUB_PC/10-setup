@@ -25,7 +25,9 @@ fi
 ainsl /etc/default/grub 'GRUB_DISABLE_OS_PROBER=true'
 
 # efivars may still be mounted from the host system during fai-diskimage
-mountpoint -q $target/sys/firmware/efi/efivars && umount $target/sys/firmware/efi/efivars
+if [ -d $target/sys/firmware/efi/efivars ]; then
+    umount $target/sys/firmware/efi/efivars
+fi
 
 # skip the rest, if not an initial installation
 if [ $FAI_ACTION != "install" ]; then
