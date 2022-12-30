@@ -36,11 +36,11 @@ linux-image-686-pae-
 linux-image-amd64-
 
 PACKAGES install-norec AMD64
-${kernelname} # see class/93-kernelname.sh
+${kernelname} # see class/DEBIAN.var
 memtest86+
 
 PACKAGES install-norec ARM64
-${kernelname} # see class/93-kernelname.sh
+${kernelname} # see class/DEBIAN.var
 grub-efi-arm64
 
 PACKAGES install-norec GRUB_PC

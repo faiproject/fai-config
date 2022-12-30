@@ -14,5 +14,5 @@ language-pack-gnome-de
 
 PACKAGES install CHROOT
 # a chroot does not need a kernel.
-# See class/93-kernelname.sh for the exact package name
+# See class/DEBIAN.var for the exact package name
 ${kernelname}-
