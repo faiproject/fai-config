@@ -4,7 +4,7 @@
 
 error=0; trap 'error=$(($?>$error?$?:$error))' ERR # save maximum error code
 
-# remove crypt password from both log files
+# remove crypt password from format.log
 if [ -f $LOGDIR/format.log ]; then
     perl -i -pane "s/Executing: yes '.+?' \| cryptsetup/Executing: yes 'XXXXXXXXXXXXX' | cryptsetup/" $LOGDIR/format.log
 fi
