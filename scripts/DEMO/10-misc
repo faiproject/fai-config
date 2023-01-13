@@ -17,7 +17,7 @@ fi
 # add additional user account
 if [ -n "$username" ]; then
     if ! $ROOTCMD getent passwd $username ; then
-	$ROOTCMD adduser --disabled-login --gecos "$username user" $username
+	$ROOTCMD adduser --disabled-password --gecos "$username user" $username
 	$ROOTCMD usermod -p "$USERPW" $username
 	userdir=$($ROOTCMD getent passwd "$username" | cut -d: -f6 )
 
