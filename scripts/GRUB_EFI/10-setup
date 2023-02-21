@@ -69,5 +69,10 @@ else
     fi
 fi
 $ROOTCMD update-grub
+if [[ $BOOT_DEVICE =~ '/dev/loop' ]]; then
+    :
+else
+    efibootmgr -v
+fi
 
 exit $error
