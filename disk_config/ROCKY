@@ -2,6 +2,9 @@
 #
 # <type> <mountpoint> <size>   <fs type> <mount options> <misc options>
 
+# you may want to add "-O ^metadata_csum_seed" to createopts if the target
+# system is older than bullseye. See #866603, #1031415, #1031416 for more info.
+
 disk_config disk1 disklabel:msdos bootable:1 fstabkey:label
 
 primary /      4G-50G    ext4  rw,noatime,errors=remount-ro createopts="-L ROOT"

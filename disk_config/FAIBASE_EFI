@@ -2,6 +2,9 @@
 #
 # p=<partlabel> <mountpoint> <size>   <fs type> <mount options> <misc options>
 
+# you may want to add "-O ^metadata_csum_seed" to createopts if the target
+# system is older than bullseye. See #866603, #1031415, #1031416 for more info.
+
 disk_config disk1 disklabel:gpt bootable:1 fstabkey:uuid
 
 p=efi  /boot/efi 512M  vfat  rw
