@@ -1,0 +1,15 @@
+#! /bin/bash
+
+# create an initrd for booting from ISO
+
+# get highest kernel version
+ver=$(ls -r1 $target/boot/initrd.img-*|tail -1| sed 's/.\+initrd.img-//')
+if [ -z "$ver" ]; then
+    echo "ERROR: no initrd found in $0"
+    exit 9
+fi
+
+rm $target/boot/initrd.img-$ver
+$ROOTCMD dracut -N --zstd --filesystems ext4 -a "dmsquash-live " -o"btrfs crypt dash lvm resume usrmount modsign mdraid shutdown virtfs" /boot/initrd.img-$ver $ver
+
+echo ISO initrd was created

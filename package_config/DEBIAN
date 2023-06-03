@@ -29,6 +29,10 @@ firmware-netronome firmware-netxen firmware-realtek
 firmware-cavium
 # firmware-ipw2x00 # needs a debconf question
 
+# needed for a live ISO
+PACKAGES install-norec LIVEISO
+dracut dracut-live dracut-squash grub-pc grub-efi-amd64-bin
+
 PACKAGES install-norec I386 AMD64
 memtest86+
 

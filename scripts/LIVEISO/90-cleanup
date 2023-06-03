@@ -1,0 +1,7 @@
+#! /bin/bash
+
+# this is defined in hooks/subroutines
+cleanup_dpkg_apt
+cleanup_base
+
+echo cleanup for live ISO done
