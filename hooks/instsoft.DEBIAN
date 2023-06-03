@@ -23,3 +23,6 @@ if [ $? -eq 0 ]; then
 	$ROOTCMD apt-get -y install locales > /dev/null
     fi
 fi
+
+# use zstd for dracut initrd
+ainsl -av /etc/dracut.conf.d/11-debian.conf "compress=zstd"
