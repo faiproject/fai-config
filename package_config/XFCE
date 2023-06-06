@@ -1,6 +1,15 @@
+# enable following two lines to get full XFCE desktop
+#PACKAGES install
+#task-xfce-desktop
+
+# stripped down version of xfce4 without libreoffice
+# upgrade to full desktop using: # apt install task-xfce-desktop
 PACKAGES install-norec
 xfce4 # base system
 xfce4-goodies # additional tools
+xfce4-power-manager
+light-locker
 lightdm
+synaptic
 firefox-esr
 network-manager-gnome
