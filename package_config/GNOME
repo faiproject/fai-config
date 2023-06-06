@@ -1,5 +1,11 @@
-PACKAGES install-norec
+# enable following two lines to get full GNOME desktop
+#PACKAGES install
+#task-gnome-desktop
 
+
+# stripped down version of GNOME without libreoffice
+# upgrade to full desktop using: # apt install task-gnome-desktop
+PACKAGES install-norec
 firefox-esr
 #thunderbird
 menu gdm3
