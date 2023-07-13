@@ -11,6 +11,7 @@
 # Supported distributions (each i386/amd64):
 # Debian GNU/Linux
 # Ubuntu 14.04/16.04/20.04/22.04
+# AlmaLinux 9
 # Rocky Linux 8/9
 # CentOS 5/6/7/8
 # Scientific Linux Cern 5/6
@@ -142,19 +143,28 @@ tarit() {
 }
 
 
-rocky() {
+rpmdist() {
 
     local arch=$1
     local vers=$2
+    local dist=$3
     local domain=$(domainname)
 
     check
     setarch $arch
-#    mkpost-centos
-    $l32 rinse --directory $xtmp --distribution rocky-$vers --arch $arch --before-post-install $xtmp/post
+    $l32 rinse --directory $xtmp --distribution $dist-$vers --arch $arch --before-post-install $xtmp/post
     domainname $domain # workaround for #613377
     cleanup-rinse
     tarit
+}
+
+
+alma() {
+    rpmdist $1 $2 alma
+}
+
+rocky() {
+    rpmdist $1 $2 rocky
 }
 
 centos() {
@@ -224,6 +234,7 @@ prtdists() {
 
     echo "Available:
 
+    ALMA9_64
     ROCKY8_64
     ROCKY9_64
     CENTOS5_32   CENTOS5_64
@@ -256,7 +267,7 @@ usage() {
     cat <<EOF
 mk-basefile, create minimal base files for a Linux distritubtion
 
-   Copyright (C) 2011-2022 by Thomas Lange
+   Copyright (C) 2011-2023 by Thomas Lange
 
 Usage: mk-basefile [OPTION] ... DISTRIBUTION
 
@@ -318,6 +329,7 @@ case "$target" in
     CENTOS8_64) centos amd64 8 ;;
     ROCKY8_64) rocky amd64 8 ;;
     ROCKY9_64) rocky amd64 9 ;;
+    ALMA9_64) alma amd64 9 ;;
     SLC5_32) slc i386 5 ;;
     SLC5_64) slc amd64 5 ;;
     SLC6_32) slc i386 6 ;;
