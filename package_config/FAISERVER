@@ -2,7 +2,7 @@ PACKAGES install-norec
 fai-quickstart
 
 debmirror tcpdump
-xorriso grub-pc
+xorriso
 lftp curl
 netselect
 syslinux-common pxelinux
