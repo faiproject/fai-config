@@ -14,6 +14,8 @@ fi
 [ "$flag_menu" ] || return 0
 
 out=$(tty)
+# save stdout and redirect stdout to tty
+exec 4>&1 > $out
 tempfile=$(mktemp)
 tempfile2=$(mktemp)
 trap "rm -f $tempfile $tempfile2" EXIT INT QUIT
@@ -147,8 +149,7 @@ while true; do
     dialog --clear --item-help --title "FAI - Fully Automatic Installation" --help-button \
 	--default-item "$default" \
 	--menu "\nSelect your FAI profile\n\nThe profile will define a list of classes,\nwhich are used by FAI.\n\n\n"\
-	15 70 0 "${par[@]}" 2> $tempfile  1> $out
-
+	15 70 0 "${par[@]}" 2> $tempfile
     _retval=$?
     case $_retval in
 	0)
@@ -158,8 +159,10 @@ while true; do
 	    echo "No profile selected."
 	    break ;;
 	2)
-	    dialog --title "Description of all profiles" --textbox $tempfile2 0 0 1> $out;;
+	    dialog --title "Description of all profiles" --textbox $tempfile2 0 0 ;;
     esac
 
 done
 unset par ardesc arshort arlong arclasses list tempfile tempfile2 _parsed _retval line
+
+exec 1>&4 # restore stdout
