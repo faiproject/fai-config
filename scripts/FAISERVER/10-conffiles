@@ -28,7 +28,9 @@ if [ $FAI_ACTION = "install" -o $FAI_ACTION = "dirinstall" ] ; then
     perl -e 'for (1..10) {printf "192.168.33.%s client%02s\n",101+$_,$_;}' >> $target/etc/hosts
 
     fai-sed '/# ReuseConnections: 1/d' /etc/apt-cacher-ng/acng.conf
-    ainsl -v /etc/apt-cacher-ng/acng.conf "ReuseConnections: 0"
+    ainsl -v /etc/apt-cacher-ng/acng.conf "ReuseConnections: 1"
+    ainsl -v /etc/apt-cacher-ng/acng.conf "PipelineDepth: 80"
+    ainsl -v /etc/apt-cacher-ng/acng.conf "DlMaxRetries: 6"
 
     # copy base file for faster building of nfsroot
     if [ -f /var/tmp/base.tar.xz ]; then
