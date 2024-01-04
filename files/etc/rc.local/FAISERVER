@@ -45,7 +45,9 @@ ainsl /etc/fai/fai.conf "^LOGUSER=fai"
 # make index, then import the packages from the CD mirror
 /etc/init.d/apt-cacher-ng restart
 apt-get update >/dev/null
+echo "Importing local packages to apt cache"
 curl -fs 'http://127.0.0.1:3142/acng-report.html?doImport=Start+Import&calcSize=cs&asNeeded=an#bottom' >/dev/null
+echo "Creating FAI Server setup"
 
 # setup the FAI server, including creating the nfsroot, use my own proxy
 export APTPROXY="http://127.0.0.1:3142"
