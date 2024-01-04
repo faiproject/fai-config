@@ -7,7 +7,7 @@ lftp curl
 netselect
 syslinux-common pxelinux
 apt-cacher-ng
-nscd psmisc
+psmisc
 bind9 dnsutils
 iptables-persistent
 zile
