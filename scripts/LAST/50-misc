@@ -105,8 +105,8 @@ EOF
     fi
 fi
 
-# install default sources.list
-if [ ! -f $target/etc/apt/sources.list ]; then
+# install default sources.list for Debian based distributions
+if [ -d $target/etc/apt ] && [ ! -f $target/etc/apt/sources.list ]; then
     fcopy -Svc DEBIAN_DEFAULT /etc/apt/sources.list
 fi
 
