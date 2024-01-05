@@ -69,9 +69,12 @@ else
     echo "=================================================="
     echo -e "${RED}ERROR${NORMAL}: Setting up the FAI install server ${RED}FAILED${NORMAL}!"
     echo "Read /var/log/fai/fai-setup.log for more debugging"
+    echo "Setup script is now moved to /var/tmp/$0"
     echo "=================================================="
     echo ""
+    cp -p $0 /var/tmp
     sleep 10
+    rm -f $0
     exit 99
 fi
 
