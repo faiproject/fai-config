@@ -1,5 +1,6 @@
 PACKAGES install-norec
 #cryptsetup-initramfs # needed if you use an encrypted partition
+bash-completion
 debconf-utils
 file
 zstd
