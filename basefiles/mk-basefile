@@ -2,13 +2,13 @@
 
 # mk-basefile, create basefiles for some distributions
 #
-# Thomas Lange, Uni Koeln, 2011-2022
+# Thomas Lange, Uni Koeln, 2011-2024
 # based on the Makefile implementation of Michael Goetze
 #
 # Usage example: mk-basefile -J STRETCH64
 # This will create a STRETCH64.tar.xz basefile.
 
-# Supported distributions (each i386/amd64):
+# Supported distributions (i386/amd64):
 # Debian GNU/Linux
 # Ubuntu 14.04/16.04/20.04/22.04
 # AlmaLinux 9
@@ -42,6 +42,7 @@ EXCLUDE_XENIAL=udhcpc,dibbler-client,info
 EXCLUDE_BIONIC=udhcpc,dibbler-client,info
 EXCLUDE_FOCAL=udhcpc,dibbler-client,info
 EXCLUDE_JAMMY=udhcpc,dibbler-client,info
+EXCLUDE_NOBLE=udhcpc,dibbler-client,info
 
 # here you can add packages, that are needed very early
 INCLUDE_DEBIAN=
@@ -249,6 +250,7 @@ prtdists() {
                  BIONIC64
                  FOCAL64
                  JAMMY64
+                 NOBLE64
     SQUEEZE32    SQUEEZE64
     WHEEZY32     WHEEZY64
     JESSIE32     JESSIE64
@@ -335,7 +337,7 @@ case "$target" in
     SLC6_32) slc i386 6 ;;
     SLC6_64) slc amd64 6 ;;
     SLC7_64) slc amd64 7 ;;
-    TRUSTY*|XENIAL*|BIONIC*|FOCAL*|JAMMY*)
+    TRUSTY*|XENIAL*|BIONIC*|FOCAL*|JAMMY*|NOBLE*)
         debgeneric $target $MIRROR_UBUNTU ;;
     SQUEEZE*|WHEEZY*|JESSIE*|STRETCH*|BUSTER*|BULLSEYE*|BOOKWORM*|TRIXIE*|FORKY*|SID*)
         debgeneric $target $MIRROR_DEBIAN $ARCH;;
