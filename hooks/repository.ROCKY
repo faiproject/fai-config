@@ -5,8 +5,7 @@
 error=0; trap 'error=$(($?>$error?$?:$error))' ERR # save maximum error code
 
 if [ $FAI_ACTION = "install" ]; then
-    mount -t proc proc $target/proc
-    mount -t sysfs sysfs $target/sys
+    ctam
     [ -L $target/etc/mtab ] || cp /etc/mtab $target/etc/mtab
 
     cat > $target/etc/sysconfig/network <<-EOF
@@ -17,9 +16,6 @@ if [ $FAI_ACTION = "install" ]; then
     ifclass DHCPC || ainsl -s /etc/hosts "$IPADDR $HOSTNAME.$DOMAIN $HOSTNAME"
     cp /etc/resolv.conf $target/etc
 fi
-
-mkdir $target/dev/pts
-mknod -m 000 $target/dev/pts/ptmx c 5 2
 
 fcopy -riv /etc/yum.repos.d/
 
