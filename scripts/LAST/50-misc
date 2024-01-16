@@ -111,7 +111,7 @@ if [ -d $target/etc/apt ] && [ ! -f $target/etc/apt/sources.list ]; then
 fi
 
 # older releases do not have the non-free-firmware section
-if [[ "buster bullseye" =~ "$release" ]]; then
+if [ -n "$release" ] && [[ "buster bullseye" =~ "$release" ]]; then
     sed -i -e 's/non-free-firmware//g' $target/etc/apt/sources.list
 fi
 
