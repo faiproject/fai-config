@@ -19,7 +19,7 @@ case $HOSTNAME in
         echo "FAIBASE DEBIAN DEMO UBUNTU JAMMY JAMMY64 XORG";;
     rocky)
         echo "FAIBASE ROCKY"   # you may want to add class XORG here
-        ifclass AMD64 && echo ROCKY8_64
+        ifclass AMD64 && echo ROCKY9_64
 	;;
     *)
         echo "FAIBASE DEBIAN DEMO" ;;
