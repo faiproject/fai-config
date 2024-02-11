@@ -11,7 +11,6 @@ openssh-client openssh-server
 time
 procinfo
 nullmailer
-eject
 sudo
 locales
 console-setup kbd
