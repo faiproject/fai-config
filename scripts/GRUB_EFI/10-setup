@@ -46,24 +46,26 @@ if [ "${_bdev%%-*}" = "/dev/dm" ]; then
   BOOT_DEVICE=$( lvs --noheadings -o devices $BOOT_DEVICE | sed -e 's/^*\([^(]*\)(.*$/\1/' )
 fi
 
+opts="--no-floppy --target=x86_64-efi --modules=part_gpt"
+
 # Check if RAID is used for the boot device
 if [[ $BOOT_DEVICE =~ '/dev/md' ]]; then
     raiddev=${BOOT_DEVICE#/dev/}
     # install grub on all members of RAID
     for device in $(LC_ALL=C perl -ne 'if(/^'$raiddev'\s.+raid\d+\s(.+)/){ $_=$1; s/\d+\[\d+\]//g; print }' /proc/mdstat); do
 	echo Install grub on /dev/$device
-	$ROOTCMD grub-install --no-floppy --force-extra-removable "/dev/$device"
+	$ROOTCMD grub-install $opts --force-extra-removable "/dev/$device"
     done
 
 elif [[ $BOOT_DEVICE =~ '/dev/loop' ]]; then
     # do not update vmram when using a loop device
-    $ROOTCMD grub-install --no-floppy --force-extra-removable --modules=part_gpt --no-nvram $BOOT_DEVICE
+    $ROOTCMD grub-install $opts --force-extra-removable  --no-nvram $BOOT_DEVICE
     if [ $? -eq 0 ]; then
         echo "Grub installed on hostdisk $BOOT_DEVICE"
     fi
 
 else
-    $ROOTCMD grub-install --no-floppy --modules=part_gpt "$GROOT"
+    $ROOTCMD grub-install $opts "$GROOT"
     if [ $? -eq 0 ]; then
         echo "Grub installed on $BOOT_DEVICE = $GROOT"
     fi
