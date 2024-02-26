@@ -5,8 +5,7 @@ if [ X$FAI_ACTION = Xinstall -a $do_init_tasks -eq 0 ]; then
     exit 0
 fi
 
-# Echo architecture and OS name in uppercase. Do NOT remove these two lines.
-uname -s | tr '[:lower:]' '[:upper:]'
+# Echo architecture
 command -v dpkg >&/dev/null && dpkg --print-architecture | tr a-z A-Z
 
 # determin if we are a DHCP client or not
