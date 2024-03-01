@@ -217,7 +217,7 @@ debgeneric() {
     fi
 
     if [ -n "$arch" ]; then
-	qemu-debootstrap --arch $arch ${exc} $inc $dist $xtmp $mirror
+	debootstrap --arch $arch ${exc} $inc $dist $xtmp $mirror
 	target="${target}_${arch^^}"
     else
 	if [[ $DIST =~ 64 ]]; then
