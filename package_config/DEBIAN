@@ -38,8 +38,7 @@ PACKAGES install-norec I386 AMD64
 memtest86+
 
 PACKAGES install-norec CHROOT
-linux-image-686-pae-
-linux-image-amd64-
+${kernelname}- # see class/DEBIAN.var
 
 PACKAGES install-norec AMD64
 ${kernelname} # see class/DEBIAN.var
