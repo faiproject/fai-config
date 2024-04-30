@@ -35,7 +35,7 @@ elif ifclass AMD64; then
    kernelname=linux-image-amd64
 fi
 
-if [ -z "kernelname" ]; then
+if [ -z "$kernelname" ]; then
     _arch=$(dpkg --print-architecture 2>/dev/null)
     case $_arch in
         i386)
