@@ -34,12 +34,12 @@ downloaded from the internet.
 Classes: INSTALL FAIBASE ROCKY ROCKY9_64 XORG
 
 Name: Ubuntu
-Description: Ubuntu 22.04 LTS desktop installation
+Description: Ubuntu 24.04 LTS desktop installation
 Short: Unity desktop
 Long: We use the Debian nfsroot for installing the Ubuntu OS.
 You should have a fast network connection, because most packages are
 downloaded from the internet.
-Classes: INSTALL FAIBASE DEMO DEBIAN UBUNTU JAMMY JAMMY64 XORG
+Classes: INSTALL FAIBASE DEMO DEBIAN UBUNTU NOBLE NOBLE64 XORG
 
 Name: Inventory
 Description: Show hardware info
