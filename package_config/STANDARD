@@ -16,7 +16,7 @@ locales
 lsof
 man-db
 manpages
-mime-support
+media-types
 ncurses-term
 netcat-traditional
 openssh-client
