@@ -4,5 +4,7 @@
 ls /etc/ssh/ssh_host_* >/dev/null 2>&1
 if [ $? -ne 0 ]; then
     dpkg-reconfigure -fnoninteractive openssh-server
+    systemctl reset-failed ssh
+    systemctl restart ssh
 fi
 rm $0
