@@ -85,6 +85,7 @@ case "$FAI_ACTION" in
         # Ubuntu >= 17.10 with netplan.io
         if [ -n "$NIC1" ]; then
             netplan_yaml $NIC1 $METHOD > $target/etc/netplan/01-${NIC1}.yaml
+            chmod 600 $target/etc/netplan/01-${NIC1}.yaml
         fi
     elif [ -d $target/etc/network/interfaces.d ]; then
         # ifupdown >= 0.7.41 (Debian >= 8, Ubuntu >= 14.04)
