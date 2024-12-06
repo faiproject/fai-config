@@ -7,11 +7,6 @@ if [ -n "$ROOTPW" ]; then
     $ROOTCMD chpasswd --encrypted <<< "root:${ROOTPW}"
 elif [ -n "$username" ]; then
     $ROOTCMD usermod -L root
-    # enable sudo for user
-    $ROOTCMD usermod -aG sudo $username
-    if [ ! -f $target/usr/bin/sudo ]; then
-	echo "WARNING. Package sudo is not installed"
-    fi
 fi
 
 exit $error
