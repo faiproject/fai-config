@@ -20,14 +20,14 @@ unattended-upgrades
 PACKAGES install NONFREE
 # you may want these non-free kernel drivers
 firmware-bnx2 firmware-bnx2x firmware-realtek
+firmware-cavium firmware-myricom firmware-netronome firmware-netxen
 firmware-linux-nonfree
 # a list of firmware for wifi/wireless
 firmware-misc-nonfree
 atmel-firmware firmware-ath9k-htc firmware-brcm80211
 firmware-iwlwifi firmware-libertas firmware-zd1211
 firmware-brcm80211 firmware-ti-connectivity
-firmware-netronome firmware-netxen firmware-realtek
-firmware-cavium
+
 # firmware-ipw2x00 # needs a debconf question
 
 # needed for a live ISO
