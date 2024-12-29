@@ -46,7 +46,13 @@ if [ "${_bdev%%-*}" = "/dev/dm" ]; then
   BOOT_DEVICE=$( lvs --noheadings -o devices $BOOT_DEVICE | sed -e 's/^*\([^(]*\)(.*$/\1/' )
 fi
 
-opts="--no-floppy --target=x86_64-efi --modules=part_gpt"
+# ARM64 or AMD64
+arch=$(uname -m)
+if [ "$arch" == "aarch64" ]; then
+    opts="--no-floppy --modules=part_gpt"
+else
+    opts="--no-floppy --target=x86_64-efi --modules=part_gpt"
+fi
 
 # Check if RAID is used for the boot device
 if [[ $BOOT_DEVICE =~ '/dev/md' ]]; then
