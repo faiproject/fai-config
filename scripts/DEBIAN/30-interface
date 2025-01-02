@@ -48,7 +48,7 @@ newnicnames() {
 
     local name
 
-    [ $do_init_tasks -eq 0 ] && return
+    inside_nfsroot || return
     [ -z "$NIC1" ] && return
 
     fields="ID_NET_NAME_FROM_DATABASE ID_NET_NAME_ONBOARD ID_NET_NAME_SLOT ID_NET_NAME_PATH"

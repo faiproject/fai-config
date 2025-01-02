@@ -9,7 +9,7 @@ if [ -f $LOGDIR/format.log ]; then
     perl -i -pane "s/Executing: yes '.+?' \| cryptsetup/Executing: yes 'XXXXXXXXXXXXX' | cryptsetup/" $LOGDIR/format.log
 fi
 
-if [ "$FAI_ACTION" = "dirinstall" -o $do_init_tasks -eq 0 ] ; then
+if [ "$FAI_ACTION" = "dirinstall" ] || ! inside_nfsroot ; then
   :
 else
   # check if mdadm has been forgotten

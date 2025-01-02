@@ -4,7 +4,7 @@
 
 # NOTE: Files named *.sh will be sourced, but their output is ignored.
 
-[ $do_init_tasks -eq 1 ] || return 0 # Do only execute when doing install
+inside_nfsroot || return 0 # Do only execute when doing install
 
 echo 0 > /proc/sys/kernel/printk
 
