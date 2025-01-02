@@ -91,7 +91,7 @@ case "$FAI_ACTION" in
         # ifupdown >= 0.7.41 (Debian >= 8, Ubuntu >= 14.04)
         iface_stanza lo loopback > $target/etc/network/interfaces.d/lo
 
-        if [ -n "$NIC1" -a ! -f $target/etc/NetworkManager/NetworkManager.conf ]; then
+        if [ -n "$NIC1" ] && [ ! -f $target/etc/NetworkManager/NetworkManager.conf ]; then
             iface_stanza $NIC1 $METHOD > $target/etc/network/interfaces.d/$NIC1
         fi
     else
@@ -103,7 +103,7 @@ case "$FAI_ACTION" in
 
     if ! ifclass DHCPC ; then
         [ -n "$NETWORK" ] && echo "localnet $NETWORK" > $target/etc/networks
-        if [ ! -L $target/etc/resolv.conf -a -e /etc/resolv.conf ]; then
+        if [ ! -L $target/etc/resolv.conf ] && [ -e /etc/resolv.conf ]; then
             cp -p /etc/resolv.conf $target/etc
         fi
     fi
