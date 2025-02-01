@@ -185,6 +185,7 @@ Resource conflict.\+ found
 os-prober will not be executed
 /sys/bus/usb/devices/\*:\*/bInterface
 _OSC evaluation for CPU failed, trying
+unable to stat /usr/libexec/polkitd
 update-rc.d: warning: start and stop actions are no longer supported"
 
 # add pattern on some conditions
