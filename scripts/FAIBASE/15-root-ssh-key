@@ -27,7 +27,7 @@ for c in $revclasses; do
         fi
         cp -v $FAI/files/root-ssh-key/$c $AUKEY
         chown root:root $AUKEY
-        chmod 700 $AUKEY
+        chmod 600 $AUKEY
         break
     fi
 done
