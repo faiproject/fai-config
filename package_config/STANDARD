@@ -4,8 +4,8 @@ PACKAGES install-norec
 apt-listchanges
 bash-completion
 bind9-host
+bind9-dnsutils
 dbus
-dnsutils
 doc-debian
 file
 gettext-base
