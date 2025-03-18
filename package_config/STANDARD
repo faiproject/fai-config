@@ -23,7 +23,7 @@ openssh-client
 pciutils
 perl
 reportbug
-telnet
+inetutils-telnet
 traceroute
 ucf
 xz-utils
