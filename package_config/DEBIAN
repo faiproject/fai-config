@@ -32,7 +32,7 @@ firmware-brcm80211 firmware-ti-connectivity
 
 # needed for a live ISO
 PACKAGES install-norec LIVEISO
-dracut dracut-live dracut-squash efibootmgr
+dracut dracut-live dracut-squash efibootmgr grub-pc grub-efi-amd64-bin
 
 PACKAGES install-norec I386 AMD64
 memtest86+
