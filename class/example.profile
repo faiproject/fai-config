@@ -25,6 +25,14 @@ You should have a fast network connection, because most packages are
 downloaded from the internet.
 Classes: INSTALL FAIBASE DEBIAN DEMO XORG GNOME
 
+Name: Alma Linux
+Description: Alma Linux 9 with Xfce desktop
+Short: A normal Xfce desktop, running Alma Linux 9
+Long: We use the Debian nfsroot for installing the Alma Linux 9 OS.
+You should have a fast network connection, because most packages are
+downloaded from the internet.
+Classes: INSTALL FAIBASE ROCKY ALMA ALMA9_64 XORG
+
 Name: Rocky Linux
 Description: Rocky Linux 9 with Xfce desktop
 Short: A normal Xfce desktop, running Rocky Linux 9
