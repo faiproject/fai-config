@@ -18,6 +18,8 @@ fi
 ls /etc/ssh/ssh_host_* > /dev/null
 if [ $? -ne 0 ]; then
     dpkg-reconfigure -fnoninteractive openssh-server
+    systemctl reset-failed ssh
+    systemctl restart ssh
 fi
 sleep 8
 
@@ -43,7 +45,7 @@ fi
 ainsl /etc/fai/fai.conf "^LOGUSER=fai"
 
 # make index, then import the packages from the CD mirror
-/etc/init.d/apt-cacher-ng restart
+systemctl restart apt-cacher-ng
 apt-get update >/dev/null
 echo "Importing local packages to apt cache"
 curl -fs 'http://127.0.0.1:3142/acng-report.html?doImport=Start+Import&calcSize=cs&asNeeded=an#bottom' >/dev/null
