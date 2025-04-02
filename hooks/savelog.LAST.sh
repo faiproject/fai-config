@@ -66,7 +66,8 @@ liberror-perl
 perl-Error
 libgpg-error-dev
 libgpg-error0
-Opts:.\+errors=remount
+^fstab.\+errors=remount
+Opts: errors=remount-ro
 [RT]X packets:
 WARNING: unexpected IO-APIC
 warned about = ( )
@@ -79,6 +80,8 @@ failmsg
 RPC call returned error 101
 deverror.out
 (floppy), sector 0
+dev fd0, sector 0
+floppy: error 10 while reading
 mount version older than kernel
 Can't locate module
 Warning only .\+MB will be used.
