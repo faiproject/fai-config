@@ -4,6 +4,20 @@
 
 error=0; trap 'error=$(($?>$error?$?:$error))' ERR # save maximum error code
 
+set_default_panel() {
+    userdir=$($ROOTCMD getent passwd "$username" | cut -d: -f6 )
+    # disable xfce question about default or empty panel
+    if [ -f $target/etc/xdg/xfce4/panel/default.xml ]; then
+	xfdir=$userdir/.config/xfce4/xfconf/xfce-perchannel-xml
+	if [ ! -d $target/$xfdir ]; then
+	    $ROOTCMD mkdir -p $xfdir
+	    $ROOTCMD cp /etc/xdg/xfce4/panel/default.xml $xfdir/xfce4-panel.xml
+	    # group name is the same as user name
+	    $ROOTCMD chown -R $username:$username $userdir/.config
+	fi
+    fi
+}
+
 ifclass XORG && {
     fcopy -M /etc/X11/xorg.conf
 }
@@ -26,21 +40,11 @@ if [ -n "$username" ]; then
 		echo "WARNING. Package sudo is not installed"
 	    fi
 	fi
-	userdir=$($ROOTCMD getent passwd "$username" | cut -d: -f6 )
-
-	# disable xfce question about default or empty panel
-	if [ -f $target/etc/xdg/xfce4/panel/default.xml ]; then
-	    xfdir=$userdir/.config/xfce4/xfconf/xfce-perchannel-xml
-	    if [ ! -d $target/$xfdir ]; then
-		$ROOTCMD mkdir -p $xfdir
-		$ROOTCMD cp /etc/xdg/xfce4/panel/default.xml $xfdir/xfce4-panel.xml
-		# group name is the same as user name
-		$ROOTCMD chown -R $username:$username $userdir/.config
-	    fi
-	fi
 
 	for g in $groups; do
 	    $ROOTCMD adduser $username $g
 	done
+
+        set_default_panel
     fi
 fi
