@@ -1,9 +1,9 @@
 # some packages we need on a demo machine
 
-PACKAGES install-norec
+PACKAGES install-norec ! MINT
 htop iotop nmon
 
 # only when also class XORG is defined
-PACKAGES install-norec XORG
+PACKAGES install-norec XORG && ! MINT
 bb xpenguins
 #frozen-bubble

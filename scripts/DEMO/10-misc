@@ -45,6 +45,9 @@ if [ -n "$username" ]; then
 	    $ROOTCMD adduser $username $g
 	done
 
-        set_default_panel
+        # do not copy for linuxmint
+        if ifclass '! MINT'; then
+            set_default_panel
+        fi
     fi
 fi

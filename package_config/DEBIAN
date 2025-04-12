@@ -1,4 +1,4 @@
-PACKAGES install-norec
+PACKAGES install-norec ! MINT
 #cryptsetup-initramfs # needed if you use an encrypted partition
 bash-completion
 debconf-utils
