@@ -17,45 +17,9 @@ version=$($ROOTCMD rpm -qv kernel | cut -d- -f2-)
 
 mount -o bind /dev $target/dev
 
-if [ -f $target/usr/sbin/grub2-install ]; then
-
     # CentOS 7
     $ROOTCMD grub2-install --no-floppy "$BOOT_DEVICE"
     $ROOTCMD grub2-mkconfig --output=/boot/grub2/grub.cfg
-else
-
-$ROOTCMD grub-install --just-copy
-
-$ROOTCMD grub --device-map=/dev/null --no-floppy --batch <<-EOF
-	device $bootdev $BOOT_DEVICE
-	root $bootpart
-	setup $bootdev
-	quit
-	EOF
-
-ln -s ./menu.lst $target/boot/grub/grub.conf
-
-if [ -f $target/boot/grub/splash.xpm.gz ]; then
-	pretty="splashimage=$bootpart$bootdir/grub/splash.xpm.gz"
-else
-	pretty="color cyan/blue white/blue"
-fi
-
-title=$(head -1 $target/etc/redhat-release)
-
-cat > $target/boot/grub/grub.conf <<-EOF
-	timeout 5
-	default 0
-	$pretty
-	hiddenmenu
-	
-	title $title
-	  root $bootpart
-	  kernel $bootdir/vmlinuz-$version root=$ROOT_PARTITION ro
-	  initrd $bootdir/initramfs-$version.img
-	EOF
-
-fi
 
 umount $target/dev
 
