@@ -49,6 +49,14 @@ You should have a fast network connection, because most packages are
 downloaded from the internet.
 Classes: INSTALL FAIBASE DEMO DEBIAN UBUNTU NOBLE NOBLE64 XORG
 
+Name: Linux Mint
+Description: Linux Mint 22.1 desktop installation
+Short: Mint desktop
+Long: We use the Debian nfsroot for installing the Linux Mint OS.
+You should have a fast network connection, because most packages are
+downloaded from the internet.
+Classes: INSTALL FAIBASE DEMO DEBIAN UBUNTU NOBLE NOBLE64 MINT
+
 Name: Inventory
 Description: Show hardware info
 Short: Show some basic hardware infos
