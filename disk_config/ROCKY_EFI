@@ -1,0 +1,14 @@
+# example of new config file for setup-storage
+#
+# p=<partlabel> <mountpoint> <size>   <fs type> <mount options> <misc options>
+
+# you may want to add "-O ^metadata_csum_seed" to createopts if the target
+# system is older than bullseye. See #866603, #1031415, #1031416 for more info.
+
+disk_config disk1 disklabel:gpt bootable:1 fstabkey:label
+
+p=efi    /boot/efi 512M    vfat  rw
+p=root   /         4G-50G  ext4  rw,noatime,errors=remount-ro createopts="-L ROOT"
+
+p=       swap      200-10G swap  sw                           createopts="-L SWAP"
+p=home   /home     100-    ext4  rw,noatime,nosuid,nodev      createopts="-L HOME -m 1" tuneopts="-c 0 -i 0"
