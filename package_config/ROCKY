@@ -31,8 +31,8 @@ PACKAGES dnfi GRUB_PC
 grub2-pc
 
 PACKAGES dnfi GRUB_EFI
-grub2-efi
-
+grub2-efi efibootmgr efivar grub2-tools-efi
+shim
 
 PACKAGES dnfi LVM
 lvm2
