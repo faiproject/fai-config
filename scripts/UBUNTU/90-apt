@@ -9,3 +9,7 @@ deb $ubuntumirror/ubuntu $ubuntudist main restricted universe multiverse
 deb $ubuntumirror/ubuntu $ubuntudist-updates main restricted universe multiverse
 deb $ubuntumirror/ubuntu $ubuntudist-security main restricted universe multiverse
 EOM
+
+if ifclass MINT; then
+    ainsl -v /etc/apt/sources.list "deb $mintmirror $mintdist main upstream import backport"
+fi
