@@ -27,7 +27,9 @@ MODULESLIST="usbhid psmouse"
 
 
 # The linux-image package has different names for Debian and Ubuntu
-if ifclass UBUNTU; then
+if ifclass HWE; then # Ubuntu HWE kernel
+   kernelname=linux-generic-hwe-24.04
+elif ifclass UBUNTU; then
     kernelname=linux-image-generic
 elif ifclass I386; then
    kernelname=linux-image-686-pae
