@@ -26,4 +26,4 @@ username=demo
 USERPW='$1$kBnWcO.E$djxB128U7dMkrltJHPf6d1'
 
 # set a default
-FAI_DEBOOTSTRAP="bookworm http://deb.debian.org/debian"
+FAI_DEBOOTSTRAP="trixie http://deb.debian.org/debian"
