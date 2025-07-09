@@ -31,7 +31,7 @@ fi
 # add additional user account
 if [ -n "$username" ]; then
     if ! $ROOTCMD getent passwd $username ; then
-	$ROOTCMD adduser --disabled-password --gecos "$username user" $username
+	$ROOTCMD adduser --disabled-password --gecos "$username" $username
 	$ROOTCMD usermod -p "$USERPW" $username
 	if [ -z "$ROOTPW" ]; then
 	    # enable sudo for user, if no root PW was set
