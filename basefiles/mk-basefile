@@ -2,7 +2,7 @@
 
 # mk-basefile, create basefiles for some distributions
 #
-# Thomas Lange, Uni Koeln, 2011-2024
+# Thomas Lange, Uni Koeln, 2011-2025
 # based on the Makefile implementation of Michael Goetze
 #
 # Usage example: mk-basefile -J STRETCH64
@@ -11,20 +11,16 @@
 # Supported distributions (i386/amd64):
 # Debian GNU/Linux
 # Ubuntu 14.04/16.04/20.04/22.04
-# AlmaLinux 9
-# Rocky Linux 8/9
-# CentOS 5/6/7/8
-# Scientific Linux Cern 5/6
+# AlmaLinux 9/10
+# Rocky Linux 8/9/10
 #
 # Packages you might want to install to use this command:
 # debootstrap, rinse, xz-utils
 
 
 # Define your local mirros here
-# For the first stage, set the CentOS/SLC mirror in /etc/rinse/rinse.conf
 MIRROR_DEBIAN=http://deb.debian.org/debian/
 MIRROR_UBUNTU=http://mirror.netcologne.de/ubuntu/
-MIRROR_CENTOS=http://mirror.netcologne.de/
 
 EXCLUDE_SQUEEZE=isc-dhcp-client,isc-dhcp-common,info
 EXCLUDE_WHEEZY=info
@@ -77,37 +73,6 @@ check() {
         exit 1
     fi
     rm -f $xtmp/test-dev-null
-}
-
-
-mkpost-centos() {
-
-    # set local mirror for rinse post script
-    [ -z "$MIRROR_CENTOS" ] && return
-    cat <<EOM > $xtmp/post
-#! /bin/sh
-mkdir -p $xtmp/etc/yum.repos.d/orig
-cp -p $xtmp/etc/yum.repos.d/*.repo $xtmp/etc/yum.repos.d/orig
-perl -pi -e 's,mirrorlist=,#mirrorlist=,; s,#baseurl=http://mirror.centos.org,baseurl=$MIRROR_CENTOS,;' $xtmp/etc/yum.repos.d/CentOS-Base.repo
-EOM
-    chmod 555 $xtmp/post
-}
-
-
-mkpost-slc() {
-
-    # set local mirror for rinse post script
-    ver=$1
-    [ -z "$MIRROR_SLC" ] && return
-    cat <<EOM > $xtmp/post
-#! /bin/sh
-mkdir -p $xtmp/etc/yum.repos.d/orig
-cp -p $xtmp/etc/yum.repos.d/*.repo $xtmp/etc/yum.repos.d/orig
-perl -pi -e 's,baseurl=http://linuxsoft.cern.ch,baseurl=$MIRROR_SLC,;' $xtmp/etc/yum.repos.d/slc$ver-os.repo
-perl -pi -e 's,baseurl=http://linuxsoft.cern.ch,baseurl=$MIRROR_SLC,;' $xtmp/etc/yum.repos.d/slc$ver-updates.repo
-
-EOM
-    chmod 555 $xtmp/post
 }
 
 
@@ -168,36 +133,6 @@ rocky() {
     rpmdist $1 $2 rocky
 }
 
-centos() {
-
-    local arch=$1
-    local vers=$2
-    local domain=$(domainname)
-
-    check
-    setarch $arch
-    mkpost-centos
-    $l32 rinse --directory $xtmp --distribution centos-$vers --arch $arch --before-post-install $xtmp/post
-    domainname $domain # workaround for #613377
-    cleanup-rinse
-    tarit
-}
-
-
-slc() {
-
-    local arch=$1
-    local vers=$2
-
-    check
-    setarch $arch
-    mkpost-slc $vers
-    $l32 rinse --directory $xtmp --distribution slc-$vers --arch $arch --before-post-install $xtmp/post
-    cleanup-rinse
-    tarit
-}
-
-
 debgeneric() {
 
     local DIST=$1
@@ -236,15 +171,10 @@ prtdists() {
     echo "Available:
 
     ALMA9_64
+    ALMA10_64
     ROCKY8_64
     ROCKY9_64
-    CENTOS5_32   CENTOS5_64
-    CENTOS6_32   CENTOS6_64
-    CENTOS7_32   CENTOS7_64
-                 CENTOS8_64
-    SLC5_32      SLC5_64
-    SLC6_32      SLC6_64
-                 SLC7_64
+    ROCKY10_64
     TRUSTY32     TRUSTY64
     XENIAL32     XENIAL64
                  BIONIC64
@@ -269,7 +199,7 @@ usage() {
     cat <<EOF
 mk-basefile, create minimal base files for a Linux distritubtion
 
-   Copyright (C) 2011-2023 by Thomas Lange
+   Copyright (C) 2011-2025 by Thomas Lange
 
 Usage: mk-basefile [OPTION] ... DISTRIBUTION
 
@@ -322,21 +252,11 @@ target=$1 # also the name of the output file
 
 [ -z "$target" ] && usage
 case "$target" in
-    CENTOS5_32) centos i386 5 ;;
-    CENTOS5_64) centos amd64 5 ;;
-    CENTOS6_32) centos i386 6 ;;
-    CENTOS6_64) centos amd64 6 ;;
-    CENTOS7_32) centos i386 7 ;;
-    CENTOS7_64) centos amd64 7 ;;
-    CENTOS8_64) centos amd64 8 ;;
     ROCKY8_64) rocky amd64 8 ;;
     ROCKY9_64) rocky amd64 9 ;;
+    ROCKY10_64) rocky amd64 10 ;;
     ALMA9_64) alma amd64 9 ;;
-    SLC5_32) slc i386 5 ;;
-    SLC5_64) slc amd64 5 ;;
-    SLC6_32) slc i386 6 ;;
-    SLC6_64) slc amd64 6 ;;
-    SLC7_64) slc amd64 7 ;;
+    ALMA10_64) alma amd64 10 ;;
     TRUSTY*|XENIAL*|BIONIC*|FOCAL*|JAMMY*|NOBLE*)
         debgeneric $target $MIRROR_UBUNTU ;;
     SQUEEZE*|WHEEZY*|JESSIE*|STRETCH*|BUSTER*|BULLSEYE*|BOOKWORM*|TRIXIE*|FORKY*|SID*)
