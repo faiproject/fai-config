@@ -95,7 +95,7 @@ cleanup-rinse() {
     echo -n "CHROOT rpm -qa: "
     chroot $xtmp rpm -qa|wc -l
 
-    rm -f $xtmp/etc/resolv.conf $xtmp/post
+    rm -f $xtmp/etc/resolv.conf
     if [ -d $xtmp/etc/yum.repos.d/orig ]; then
         mv $xtmp/etc/yum.repos.d/orig/* $xtmp/etc/yum.repos.d/
         rm -rf $xtmp/etc/yum.repos.d/orig
@@ -118,7 +118,7 @@ rpmdist() {
 
     check
     setarch $arch
-    $l32 rinse --directory $xtmp --distribution $dist-$vers --arch $arch --before-post-install $xtmp/post
+    $l32 rinse --directory $xtmp --distribution $dist-$vers --arch $arch
     domainname $domain # workaround for #613377
     cleanup-rinse
     tarit
