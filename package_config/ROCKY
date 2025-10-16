@@ -11,6 +11,8 @@ workstation-product-environment
 PACKAGES dnfi
 NetworkManager
 dbus-broker # needed by systemd
+rpm-plugin-systemd-inhibit
+python-unversioned-command
 chrony
 kernel
 dracut
