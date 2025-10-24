@@ -212,21 +212,18 @@ $myerrorpatterns"
 ignorepatterns="$globalignorepatterns
 $myignorepatterns"
 
-cd $LOGDIR || exit 3
-if [ -s $errfile ]; then
-    echo "Errorfile already exists. Aborting." >&2
-    exit
-fi
+cd $LOGDIR && if [ ! -s $errfile ]; then
 
-grep -i "$errorpatterns" *.log | grep -vi "$ignorepatterns" > $errfile
-if [ X$verbose = X1 ]; then
-    egrep -v '^software.log:' $errfile > $LOGDIR/tempfile
-    mv $LOGDIR/tempfile $errfile
-fi
+    grep -i "$errorpatterns" *.log | grep -vi "$ignorepatterns" > $errfile
+    if [ X$verbose = X1 ]; then
+        egrep -v '^software.log:' $errfile > $LOGDIR/tempfile
+        mv $LOGDIR/tempfile $errfile
+    fi
 
-if [ -s $errfile ]; then
-   echo "ERRORS found in log files. See $errfile" >&2
-else
-   echo "Congratulations! No errors found in log files."
-#   export flag_reboot=1 # if you want to reboot if no errors are found
+    if [ -s $errfile ]; then
+        echo "ERRORS found in log files. See $errfile" >&2
+    else
+        echo "Congratulations! No errors found in log files."
+        #   export flag_reboot=1 # if you want to reboot if no errors are found
+    fi
 fi
