@@ -10,6 +10,6 @@ if [ -z "$ver" ]; then
 fi
 
 rm $target/boot/initrd.img-$ver
-$ROOTCMD dracut -N --zstd --filesystems ext4 -a "dmsquash-live " -o"btrfs crypt lvm resume usrmount modsign mdraid shutdown virtfs" /boot/initrd.img-$ver $ver
+$ROOTCMD dracut -N --zstd --filesystems ext4 -a "dmsquash-live " -o"btrfs crypt lvm resume usrmount modsign mdraid virtfs" /boot/initrd.img-$ver $ver
 
 echo ISO initrd was created
