@@ -26,7 +26,7 @@ firmware-linux-nonfree
 firmware-misc-nonfree
 atmel-firmware firmware-ath9k-htc firmware-brcm80211
 firmware-iwlwifi firmware-libertas firmware-zd1211
-firmware-brcm80211 firmware-ti-connectivity
+firmware-ti-connectivity
 
 # firmware-ipw2x00 # needs a debconf question
 
