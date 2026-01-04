@@ -190,6 +190,7 @@ prtdists() {
     BOOKWORM32   BOOKWORM64
     TRIXIE32     TRIXIE64
     FORKY32      FORKY64
+    DUKE32       DUKE64
     SID32        SID64
 "
 }
@@ -199,7 +200,7 @@ usage() {
     cat <<EOF
 mk-basefile, create minimal base files for a Linux distritubtion
 
-   Copyright (C) 2011-2025 by Thomas Lange
+   Copyright (C) 2011-2026 by Thomas Lange
 
 Usage: mk-basefile [OPTION] ... DISTRIBUTION
 
@@ -259,7 +260,7 @@ case "$target" in
     ALMA10_64) alma amd64 10 ;;
     TRUSTY*|XENIAL*|BIONIC*|FOCAL*|JAMMY*|NOBLE*)
         debgeneric $target $MIRROR_UBUNTU ;;
-    SQUEEZE*|WHEEZY*|JESSIE*|STRETCH*|BUSTER*|BULLSEYE*|BOOKWORM*|TRIXIE*|FORKY*|SID*)
+    SQUEEZE*|WHEEZY*|JESSIE*|STRETCH*|BUSTER*|BULLSEYE*|BOOKWORM*|TRIXIE*|FORKY*|DUKE*|SID*)
         debgeneric $target $MIRROR_DEBIAN $ARCH;;
     *) echo "Unknown distribution. Aborting."
        prtdists

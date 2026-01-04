@@ -27,6 +27,7 @@ firmware-misc-nonfree
 atmel-firmware firmware-ath9k-htc firmware-brcm80211
 firmware-iwlwifi firmware-libertas firmware-zd1211
 firmware-ti-connectivity
+firmware-mediatek
 
 # firmware-ipw2x00 # needs a debconf question
 
