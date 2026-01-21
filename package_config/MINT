@@ -243,12 +243,6 @@ libxreaderview3
 lightdm-settings
 light-locker
 light-locker-settings
-linux-generic
-linux-headers-6.8.0-51-generic
-linux-image-6.8.0-51-generic
-linux-modules-extra-6.8.0-51-generic
-linux-tools-6.8.0-57
-linux-tools-6.8.0-57-generic
 lm-sensors
 login
 logrotate
@@ -449,6 +443,7 @@ curl
 dbus-x11
 dctrl-tools
 dpkg-repack
+fingwit
 fonts-liberation
 fonts-noto-core
 fonts-noto-mono
@@ -476,3 +471,23 @@ wireplumber
 xbitmaps
 xserver-xorg-input-all
 xserver-xorg-input-libinput
+
+# added for zena
+cabextract
+gstreamer1.0-libav
+gstreamer1.0-plugins-bad
+gstreamer1.0-plugins-ugly
+gstreamer1.0-vaapi
+imagemagick-6-common
+mint-meta-codecs
+mintsysadm
+mokutil
+shim-signed
+timgm6mb-soundfont
+unshield
+vulkan-tools
+xapp-symbolic-icons
+gnome-calendar
+gnome-font-viewer
+python3-aptdaemon.gtk3widgets
+grub-gfxpayload-lists

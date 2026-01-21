@@ -16,3 +16,6 @@ PACKAGES install CHROOT
 # a chroot does not need a kernel.
 # See class/DEBIAN.var for the exact package name
 ${kernelname}-
+
+PACKAGES install HWE
+linux-generic-hwe-24.04
