@@ -7,3 +7,4 @@ keyboard-configuration  keyboard-configuration/variant  select USA
 keyboard-configuration  keyboard-configuration/model    select Generic 105-key (Intl) PC
 keyboard-configuration  keyboard-configuration/layoutcode       string us
 keyboard-configuration  keyboard-configuration/optionscode      string ctrl:nocaps,terminate:ctrl_alt_bksp
+firmware-ipw2x00        firmware-ipw2x00/license/accepted       boolean true
