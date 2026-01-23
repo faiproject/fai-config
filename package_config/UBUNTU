@@ -19,3 +19,7 @@ ${kernelname}-
 
 PACKAGES install HWE
 linux-generic-hwe-24.04
+linux-generic-
+
+PACKAGES install ! HWE
+linux-generic
