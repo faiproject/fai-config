@@ -50,12 +50,12 @@ downloaded from the internet.
 Classes: INSTALL FAIBASE DEMO DEBIAN UBUNTU NOBLE NOBLE64 XORG
 
 Name: Linux Mint
-Description: Linux Mint 22.2 desktop installation
-Short: Mint desktop
+Description: Linux Mint 22.3 Xfce Edition installation
+Short:Linux Mint desktop
 Long: We use the Debian nfsroot for installing the Linux Mint OS.
 You should have a fast network connection, because most packages are
 downloaded from the internet.
-Classes: INSTALL FAIBASE DEMO DEBIAN UBUNTU NOBLE NOBLE64 MINT
+Classes: INSTALL FAIBASE DEMO DEBIAN UBUNTU NOBLE NOBLE64 HWE MINT
 
 Name: Inventory
 Description: Show hardware info
