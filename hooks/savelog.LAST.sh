@@ -182,6 +182,7 @@ stunnel4 you specified can't be accessed: No such file or directory
 install-docs --verbose --check file_name' may give more details about the above errors
 cannot open '/etc/ssl/certs/java/cacerts' for reading: No such file or directory
 can't claim BAR
+can't claim; no compatible
 disabling ASPM
 data block query control method not found
 subprocess.py.\+RuntimeWarning: line buffering
