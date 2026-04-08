@@ -34,6 +34,7 @@ firmware-mediatek
 # needed for a live ISO
 PACKAGES install-norec LIVEISO
 dracut dracut-live dracut-squash efibootmgr grub-pc grub-efi-amd64-bin
+grub-efi-amd64-signed shim-signed
 
 PACKAGES install-norec I386 AMD64
 memtest86+
@@ -54,6 +55,7 @@ grub-pc
 
 PACKAGES install-norec GRUB_EFI
 grub-efi dosfstools efibootmgr
+grub-efi-amd64-signed shim-signed
 
 PACKAGES install LVM
 lvm2
