@@ -490,4 +490,6 @@ xapp-symbolic-icons
 gnome-calendar
 gnome-font-viewer
 python3-aptdaemon.gtk3widgets
+
+PACKAGES install ! GRUB_EFI
 grub-gfxpayload-lists
