@@ -42,12 +42,12 @@ downloaded from the internet.
 Classes: INSTALL FAIBASE ROCKY ROCKY10_64 XORG
 
 Name: Ubuntu
-Description: Ubuntu 24.04 LTS desktop installation
+Description: Ubuntu 26.04 LTS desktop installation
 Short: Unity desktop
 Long: We use the Debian nfsroot for installing the Ubuntu OS.
 You should have a fast network connection, because most packages are
 downloaded from the internet.
-Classes: INSTALL FAIBASE DEMO DEBIAN UBUNTU NOBLE NOBLE64 XORG
+Classes: INSTALL FAIBASE DEMO DEBIAN UBUNTU RESOLUTE RESOLUTE64 XORG
 
 Name: Linux Mint
 Description: Linux Mint 22.3 Xfce Edition installation
@@ -55,7 +55,7 @@ Short:Linux Mint desktop
 Long: We use the Debian nfsroot for installing the Linux Mint OS.
 You should have a fast network connection, because most packages are
 downloaded from the internet.
-Classes: INSTALL FAIBASE DEMO DEBIAN UBUNTU NOBLE NOBLE64 HWE MINT
+Classes: INSTALL FAIBASE DEMO DEBIAN UBUNTU RESOLUTE RESOLUTE64 HWE MINT
 
 Name: Inventory
 Description: Show hardware info
