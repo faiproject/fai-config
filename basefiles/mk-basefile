@@ -39,7 +39,7 @@ EXCLUDE_BIONIC=udhcpc,dibbler-client,info
 EXCLUDE_FOCAL=udhcpc,dibbler-client,info
 EXCLUDE_JAMMY=udhcpc,dibbler-client,info
 EXCLUDE_NOBLE=udhcpc,dibbler-client,info
-EXCLUDE_RACCOON=udhcpc,dibbler-client,info
+EXCLUDE_RESOLUTE=udhcpc,dibbler-client,info
 
 # here you can add packages, that are needed very early
 INCLUDE_DEBIAN=
@@ -182,7 +182,7 @@ prtdists() {
                  FOCAL64
                  JAMMY64
                  NOBLE64
-                 RACCOON64
+                 RESOLUTE64
     SQUEEZE32    SQUEEZE64
     WHEEZY32     WHEEZY64
     JESSIE32     JESSIE64
@@ -260,7 +260,7 @@ case "$target" in
     ROCKY10_64) rocky amd64 10 ;;
     ALMA9_64) alma amd64 9 ;;
     ALMA10_64) alma amd64 10 ;;
-    TRUSTY*|XENIAL*|BIONIC*|FOCAL*|JAMMY*|NOBLE*|RACCOON*)
+    TRUSTY*|XENIAL*|BIONIC*|FOCAL*|JAMMY*|NOBLE*|RESOLUTE*)
         debgeneric $target $MIRROR_UBUNTU ;;
     SQUEEZE*|WHEEZY*|JESSIE*|STRETCH*|BUSTER*|BULLSEYE*|BOOKWORM*|TRIXIE*|FORKY*|DUKE*|SID*)
         debgeneric $target $MIRROR_DEBIAN $ARCH;;
