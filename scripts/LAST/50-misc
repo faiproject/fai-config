@@ -82,7 +82,7 @@ setrel() {
 	return
     fi
 
-    dists="jessie stretch buster bullseye bookworm trixie forky duke jammy focal bionic xenial trusty noble raccoon"
+    dists="jessie stretch buster bullseye bookworm trixie forky duke jammy focal bionic xenial trusty noble resolute"
     for d in $dists; do
 	if grep -iq $d $target/etc/os-release; then
 	    release=$d
