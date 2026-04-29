@@ -55,7 +55,7 @@ Short:Linux Mint desktop
 Long: We use the Debian nfsroot for installing the Linux Mint OS.
 You should have a fast network connection, because most packages are
 downloaded from the internet.
-Classes: INSTALL FAIBASE DEMO DEBIAN UBUNTU RESOLUTE RESOLUTE64 HWE MINT
+Classes: INSTALL FAIBASE DEMO DEBIAN UBUNTU NOBLE NOBLE64 HWE MINT
 
 Name: Inventory
 Description: Show hardware info
