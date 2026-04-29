@@ -1,2 +1,5 @@
 mintmirror=http://packages.linuxmint.com
 mintdist=zena
+
+# Mint is still using Ubuntu 24.04
+ubuntudist=noble
