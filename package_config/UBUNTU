@@ -17,7 +17,11 @@ PACKAGES install CHROOT
 # See class/DEBIAN.var for the exact package name
 ${kernelname}-
 
-PACKAGES install HWE
+PACKAGES install HWE && ! MINT
+linux-generic-hwe-26.04
+linux-generic- linux-image-generic-
+
+PACKAGES install HWE && MINT
 linux-generic-hwe-24.04
 linux-generic- linux-image-generic-
 
