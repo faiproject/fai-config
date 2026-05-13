@@ -13,7 +13,7 @@ if [ "$FAI_ACTION" = "dirinstall" ] || ! inside_nfsroot ; then
   :
 else
   # check if mdadm has been forgotten
-  if grep -q active /proc/mdstat 2>/dev/null; then
+  if grep -qs active /proc/mdstat; then
     if [ ! -d $target/etc/mdadm ]; then
 	echo ERROR: Found Software RAID, but the mdadm package was not installed
 	error=1
