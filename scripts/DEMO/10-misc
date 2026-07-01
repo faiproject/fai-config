@@ -36,7 +36,7 @@ if [ -n "$username" ]; then
 	if [ -z "$ROOTPW" ]; then
 	    # enable sudo for user, if no root PW was set
 	    $ROOTCMD usermod -aG sudo $username
-	    if [ ! -f $target/usr/bin/sudo ] || [ ! -L $target/usr/bin/sudo ]; then
+	    if [ ! -f $target/usr/bin/sudo ] && [ ! -L $target/usr/bin/sudo ]; then
 		echo "WARNING. Package sudo is not installed"
 	    fi
 	fi
