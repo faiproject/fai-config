@@ -15,31 +15,13 @@
 # Rocky Linux 8/9/10
 #
 # Packages you might want to install to use this command:
-# debootstrap, rinse, xz-utils
-
+# mmdebstrap, rinse, xz-utils
+# needs package ubuntu-keyring for creating ubuntu basefiles
+# needs package arch-test for creating for a different architecture
 
 # Define your local mirros here
 MIRROR_DEBIAN=http://deb.debian.org/debian/
 MIRROR_UBUNTU=http://mirror.netcologne.de/ubuntu/
-
-EXCLUDE_SQUEEZE=isc-dhcp-client,isc-dhcp-common,info
-EXCLUDE_WHEEZY=info
-EXCLUDE_JESSIE=info
-EXCLUDE_STRETCH=info
-EXCLUDE_BUSTER=
-EXCLUDE_BULLSEYE=
-EXCLUDE_BOOKWORM=
-EXCLUDE_TRIXIE=
-EXCLUDE_FORKY=
-EXCLUDE_SID=
-
-EXCLUDE_TRUSTY=dhcp3-client,dhcp3-common,info
-EXCLUDE_XENIAL=udhcpc,dibbler-client,info
-EXCLUDE_BIONIC=udhcpc,dibbler-client,info
-EXCLUDE_FOCAL=udhcpc,dibbler-client,info
-EXCLUDE_JAMMY=udhcpc,dibbler-client,info
-EXCLUDE_NOBLE=udhcpc,dibbler-client,info
-EXCLUDE_RESOLUTE=udhcpc,dibbler-client,info
 
 # here you can add packages, that are needed very early
 INCLUDE_DEBIAN=
@@ -143,8 +125,6 @@ debgeneric() {
     local arch=$1
 
     dist=${DIST%%[0-9][0-9]}
-    local exc="EXCLUDE_$dist"
-    [ -n "${!exc}" ] && exc="--exclude=${!exc}" || unset exc
     dist=${dist,,}
 
     check
@@ -153,7 +133,7 @@ debgeneric() {
     fi
 
     if [ -n "$arch" ]; then
-	debootstrap --arch $arch ${exc} $inc $dist $xtmp $mirror
+	mmdebstrap --arch $arch $inc $dist $xtmp $mirror
 	target="${target}_${arch^^}"
     else
 	if [[ $DIST =~ 64 ]]; then
@@ -161,7 +141,7 @@ debgeneric() {
 	else
             arch=i386
 	fi
-	debootstrap --arch $arch ${exc} $inc $dist $xtmp $mirror
+	mmdebstrap --arch $arch $inc $dist $xtmp $mirror
     fi
     cleanup-deb
     tarit
