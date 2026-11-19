@@ -59,17 +59,6 @@ check() {
 }
 
 
-cleanup-deb() {
-
-    chroot $xtmp apt-get clean
-    rm -f $xtmp/etc/hostname $xtmp/etc/resolv.conf \
-          $xtmp/var/lib/apt/lists/*_* $xtmp/usr/bin/qemu-*-static \
-          $xtmp/etc/udev/rules.d/70-persistent-net.rules \
-          $xtmp/var/lib/dbus/machine-id
-    > $xtmp/etc/machine-id
-}
-
-
 cleanup-rinse() {
 
     # check if chroot works
@@ -127,24 +116,24 @@ debgeneric() {
     dist=${DIST%%[0-9][0-9]}
     dist=${dist,,}
 
-    check
     if [ -n "$INCLUDE_DEBIAN" ]; then
 	local inc="--include=$INCLUDE_DEBIAN"
     fi
 
     if [ -n "$arch" ]; then
-	mmdebstrap --arch $arch $inc $dist $xtmp $mirror
-	target="${target}_${arch^^}"
+        target="${target}_${arch^^}"
     else
 	if [[ $DIST =~ 64 ]]; then
             arch=amd64
 	else
             arch=i386
 	fi
-	mmdebstrap --arch $arch $inc $dist $xtmp $mirror
     fi
-    cleanup-deb
-    tarit
+	mmdebstrap --arch $arch \
+        --customize-hook='chroot "$1" apt-get clean' \
+        --customize-hook='rm -f "$1"/etc/hostname "$1"/etc/resolv.conf "$1"/var/lib/apt/lists/*_* "$1"/usr/bin/qemu-*-static "$1"/etc/udev/rules.d/70-persistent-net.rules "$1"/var/lib/dbus/machine-id' \
+        --customize-hook='echo > "$1"/etc/machine-id' \
+        $inc $dist $target.$ext $mirror
 }
 
 prtdists() {
